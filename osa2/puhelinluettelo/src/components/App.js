@@ -1,15 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import Person from './Person'
 import Filter from './Filter'
 import PersonAdder from './PersonAdder'
 
 const App = () => {
-    const [persons, setPersons] = useState([
-        { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'Ada Lovelace', number: '39-44-5323523' },
-        { name: 'Dan Abramov', number: '12-43-234345' },
-        { name: 'Mary Poppendieck', number: '39-23-6423122' }
-    ])
+    const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
@@ -41,17 +37,27 @@ const App = () => {
         }
     }
 
+    useEffect(() => {
+        console.log('effect')
+        axios
+            .get('http://localhost:3001/persons')
+            .then(response => {
+                console.log('promise fulfilled')
+                setPersons(response.data)
+            })
+    }, [])
+
     return (
         <div>
             <h2>Phonebook</h2>
             <Filter text={'filter shown with'} value={filter} handler={handleFilterInputChange} />
-            <PersonAdder header={'add a new'} submitFunction={addPerson} name={newName} nameHandler={handleNameInputChange} number={newNumber} numberHandler={handleNumberInputChange}/>
+            <PersonAdder header={'add a new'} submitFunction={addPerson} name={newName} nameHandler={handleNameInputChange} number={newNumber} numberHandler={handleNumberInputChange} />
             <h2>Numbers</h2>
-            <ul> 
+            <ul>
                 {persons.filter(person => person['name'].includes(filter)).map((person, i) =>
                     <Person key={i} name={person.name} number={person.number} />
                 )}
-                
+
             </ul>
         </div>
     )
