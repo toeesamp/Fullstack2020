@@ -37,6 +37,8 @@ const App = () => {
         }
     }
 
+    const personsToShow = persons.filter(person => person['name'].includes(filter))
+
     useEffect(() => {
         console.log('effect')
         axios
@@ -54,7 +56,7 @@ const App = () => {
             <PersonAdder header={'add a new'} submitFunction={addPerson} name={newName} nameHandler={handleNameInputChange} number={newNumber} numberHandler={handleNumberInputChange} />
             <h2>Numbers</h2>
             <ul>
-                {persons.filter(person => person['name'].includes(filter)).map((person, i) =>
+                {personsToShow.map((person, i) =>
                     <Person key={i} name={person.name} number={person.number} />
                 )}
 
