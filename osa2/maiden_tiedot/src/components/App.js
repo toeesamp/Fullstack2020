@@ -12,6 +12,10 @@ const App = () => {
         setFilter(event.target.value)
     }
 
+    const selectCountryHandler = (event) => {
+        setFilter(event.target.value)
+    }
+
     // case insensitive filter for country names using the text in the 'filter' input field
     const filteredCountries = countries.filter(country => country['name'].toLowerCase().includes(filter.toLowerCase()))
 
@@ -36,7 +40,7 @@ const App = () => {
                 ? null
                 : filteredCountries.length > 10
                     ? <p>Too many matches, specify another filter</p>
-                    : <CountryList countries={filteredCountries}/>
+                    : <CountryList countries={filteredCountries} selectCountryHandler={selectCountryHandler}/>
             }
             {filteredCountries.length === 1 
                 ? <CountryDetails country={filteredCountries[0]} /> 
