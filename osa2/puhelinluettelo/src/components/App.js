@@ -11,17 +11,14 @@ const App = () => {
     const [filter, setFilter] = useState('')
 
     const handleNameInputChange = (event) => {
-        console.log(event.target.value)
         setNewName(event.target.value)
     }
 
     const handleNumberInputChange = (event) => {
-        console.log(event.target.value)
         setNewNumber(event.target.value)
     }
 
     const handleFilterInputChange = (event) => {
-        console.log(event.target.value)
         setFilter(event.target.value)
     }
 
@@ -31,20 +28,22 @@ const App = () => {
             alert(`${newName} is already added to phonebook`)
         } else {
             const personObject = { name: newName, number: newNumber }
-            setPersons(persons.concat(personObject))
-            setNewName('')
-            setNewNumber('')
+            axios
+                .post('http://localhost:3001/persons', personObject)
+                .then(response => {
+                    setPersons(persons.concat(response.data))
+                    setNewName('')
+                    setNewNumber('')
+                })
         }
     }
 
-    const personsToShow = persons.filter(person => person['name'].includes(filter))
+    const personsToShow = persons.filter(person => person['name'].toLowerCase().includes(filter.toLowerCase()))
 
     useEffect(() => {
-        console.log('effect')
         axios
             .get('http://localhost:3001/persons')
             .then(response => {
-                console.log('promise fulfilled')
                 setPersons(response.data)
             })
     }, [])
