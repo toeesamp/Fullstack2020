@@ -3,6 +3,7 @@ import axios from 'axios'
 import Person from './Person'
 import Filter from './Filter'
 import PersonAdder from './PersonAdder'
+import personService from '../services/Persons'
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -28,8 +29,8 @@ const App = () => {
             alert(`${newName} is already added to phonebook`)
         } else {
             const personObject = { name: newName, number: newNumber }
-            axios
-                .post('http://localhost:3001/persons', personObject)
+            personService
+                .create(personObject)
                 .then(response => {
                     setPersons(persons.concat(response.data))
                     setNewName('')
@@ -41,8 +42,8 @@ const App = () => {
     const personsToShow = persons.filter(person => person['name'].toLowerCase().includes(filter.toLowerCase()))
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
+        personService
+            .getAll()
             .then(response => {
                 setPersons(response.data)
             })
