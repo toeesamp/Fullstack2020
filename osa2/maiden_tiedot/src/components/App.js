@@ -7,6 +7,7 @@ import CountryList from './CountryList'
 const App = () => {
     const [filter, setFilter] = useState('')
     const [countries, setCountries] = useState([])
+    const api_key = process.env.REACT_APP_API_KEY
 
     const handleFilterInputChange = (event) => {
         setFilter(event.target.value)
@@ -43,7 +44,7 @@ const App = () => {
                     : <CountryList countries={filteredCountries} selectCountryHandler={selectCountryHandler}/>
             }
             {filteredCountries.length === 1 
-                ? <CountryDetails country={filteredCountries[0]} /> 
+                ? <CountryDetails country={filteredCountries[0]} apikey={api_key} /> 
                 : null
             }
         </div>
