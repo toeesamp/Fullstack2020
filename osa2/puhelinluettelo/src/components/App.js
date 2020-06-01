@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Person from './Person'
 import Filter from './Filter'
 import PersonAdder from './PersonAdder'
+import Notification from './Notification'
 import personService from '../services/Persons'
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
+    const [notification, setNotification] = useState('')
+    const [notificationType, setNotificationType] = useState('')
 
     const handleNameInputChange = (event) => {
         setNewName(event.target.value)
@@ -35,6 +38,11 @@ const App = () => {
                 .then(response => {
                     // replace updated person with response data and copy others
                     setPersons(persons.map(person => person.id !== updateId ? person : response.data))
+                    setNotification(`${newName} has been updated`)
+                    setNotificationType('info')
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
                 })
         } else {
             personService
@@ -43,6 +51,11 @@ const App = () => {
                     setPersons(persons.concat(response.data))
                     setNewName('')
                     setNewNumber('')
+                    setNotification(`Added ${newName}`)
+                    setNotificationType('info')
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
                 })
         }
     }
@@ -56,6 +69,11 @@ const App = () => {
             .deletePerson(id)
             .then(response => {
                 setPersons(persons.filter(person => person !== personToBeDeleted))
+                setNotification(`${personToBeDeleted.name} has been deleted`)
+                setNotificationType('info')
+                setTimeout(() => {
+                    setNotification(null)
+                }, 5000)
             })
     }
 
@@ -72,6 +90,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={notification} type={notificationType} />
             <Filter text={'filter shown with'} value={filter} handler={handleFilterInputChange} />
             <PersonAdder header={'add a new'} submitFunction={addPerson} name={newName} nameHandler={handleNameInputChange} number={newNumber} numberHandler={handleNumberInputChange} />
             <h2>Numbers</h2>
