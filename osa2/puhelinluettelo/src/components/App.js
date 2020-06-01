@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import Person from './Person'
 import Filter from './Filter'
 import PersonAdder from './PersonAdder'
@@ -39,6 +38,18 @@ const App = () => {
         }
     }
 
+    const deletePerson = (id) => {
+        const personToBeDeleted = persons.filter(person => person.id === id)[0]
+        if (!window.confirm(`Delete ${personToBeDeleted.name}?`)) {
+            return
+        }
+        personService
+            .deletePerson(id)
+            .then(response => {
+                setPersons(persons.filter(person => person !== personToBeDeleted))
+            })
+    }
+
     const personsToShow = persons.filter(person => person['name'].toLowerCase().includes(filter.toLowerCase()))
 
     useEffect(() => {
@@ -57,7 +68,7 @@ const App = () => {
             <h2>Numbers</h2>
             <ul>
                 {personsToShow.map((person, i) =>
-                    <Person key={i} name={person.name} number={person.number} />
+                    <Person key={i} name={person.name} number={person.number} deleteHandler={() => deletePerson(person.id)} />
                 )}
 
             </ul>
