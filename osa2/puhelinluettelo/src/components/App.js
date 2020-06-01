@@ -44,6 +44,13 @@ const App = () => {
                         setNotification(null)
                     }, 5000)
                 })
+                .catch(error => {
+                    setNotification(`Unable to update ${newName}: ${error}` )
+                    setNotificationType('error')
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 15000)
+                })
         } else {
             personService
                 .create(personObject)
@@ -56,6 +63,13 @@ const App = () => {
                     setTimeout(() => {
                         setNotification(null)
                     }, 5000)
+                })
+                .catch(error => {
+                    setNotification(`Unable to add ${newName}: ${error}` )
+                    setNotificationType('error')
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 15000)
                 })
         }
     }
@@ -74,6 +88,13 @@ const App = () => {
                 setTimeout(() => {
                     setNotification(null)
                 }, 5000)
+            })
+            .catch(error => {
+                setNotification(`Unable to delete ${newName}: ${error}` )
+                setNotificationType('error')
+                setTimeout(() => {
+                    setNotification(null)
+                }, 15000)
             })
     }
 
