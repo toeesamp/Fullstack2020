@@ -65,7 +65,7 @@ const App = () => {
                     }, 5000)
                 })
                 .catch(error => {
-                    setNotification(`Unable to add ${newName}: ${error}` )
+                    setNotification(error.response.data.error)
                     setNotificationType('error')
                     setTimeout(() => {
                         setNotification(null)
