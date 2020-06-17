@@ -25,54 +25,23 @@ const mostBlogs = (blogs) => {
     if (blogs.length === 0) {
         return {}
     }
-    //const nametest = _.map(blogs, blog => _.pick(blog, ['author']))
-    //const nametest = blogs.map(({ author }) => { author })
-    //console.log(nametest)
-    //const names = blogs.map(({ _id, title, url, likes, __v, ...keepAttrs }) => keepAttrs)
-    //console.log(names)
+
+    //discard everything but the author name
     const authors = blogs.map(({ author }) => author)
-    //console.log(authors)
 
-    const countby = _(authors).countBy().value()
-    console.log('tää on countby',countby)
-
-    const countbytopairs = _(authors)
-        //testi
-        .countBy()
-        //testi
-        .toPairs()
-        //testi
-        .value()
-    console.log('tää on countbytopairs',countbytopairs)
-
-    const countbytopairsmax = _(authors)
+    const resultArray =_(authors)
         //count the occurrence of author names
         .countBy()
-        //
-        //.toPairs()
-        //testi
+        //convert to array of [author, count] pairs for maxBy
+        .toPairs()
+        //get the pair with largest count
         .maxBy()
-    console.log('tää on countbytopairsmax',countbytopairsmax)
 
-    //const countbytopairs = countby.toPairs().maxBy(_.last)
-    //console.log(countbytopairs)
-
-    //const countby2  = _(nametest).countBy()
-    //console.log(countby2)
-
-    //const countby2topairs = countby2.toPairs().maxBy(_.last)
-    //console.log(countby2topairs)
-
-    //const result = _(authors).countBy().entries().maxBy(_.last)
-    const result = _(authors).countBy().entries().maxBy()
-    //const result = _.head(_(authors).countBy().entries().maxBy(_.last))
-    //console.log(blogs)
-    //console.log(result)
-    const test = {
-        'author': result[0],
-        'blogs': result[1]
+    const resultObject = {
+        'author': resultArray[0],
+        'blogs': resultArray[1]
     }
-    return test
+    return resultObject
 }
 
 module.exports = {

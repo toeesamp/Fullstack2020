@@ -108,6 +108,15 @@ describe('most blogs', () => {
         const result = listHelper.mostBlogs(emptyList)
         expect(result).toEqual({})
     })
+    test('most blogs of single blog should be the authors name with 1 blog', () => {
+        const result = listHelper.mostBlogs(oneBlog)
+        expect(result).toEqual(
+            {
+                author: 'Michael Chan',
+                blogs: 1
+            })
+    })
+
     test('Robert C. Martin should have 3 blogs', () => {
         const result = listHelper.mostBlogs(blogs)
         expect(result).toEqual(
