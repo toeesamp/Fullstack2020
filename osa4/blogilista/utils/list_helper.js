@@ -30,17 +30,8 @@ const mostBlogs = (blogs) => {
     //discard everything but the author name
     const authors = blogs.map(({ author }) => author)
 
-
-    console.log(_(authors).countBy().value())
-
-    const resultArray = calculateMaximum(_.countBy(authors))
-    //const resultArray =_(authors)
-    //    //count the occurrence of author names
-    //    .countBy()
-    //    //convert to array of [author, count] pairs for maxBy
-    //    .toPairs()
-    //    //get the pair with largest count (last element in the tuple)
-    //    .maxBy(_.last)
+    //count the occurrences of author names and get the maximum value
+    const resultArray = maxPropertyValue(_.countBy(authors))
 
     const resultObject = {
         'author': resultArray[0],
@@ -62,13 +53,7 @@ const mostLikes = (blogs) => {
     //calculate the total sum of likes for each author
     const likesPerAuthor = _.mapValues(groupedAuthors, blogsByAuthor => _.sumBy(blogsByAuthor, 'likes'))
 
-    console.log(likesPerAuthor)
-    const resultArray = calculateMaximum(likesPerAuthor)
-    //const resultArray = _(likesPerAuthor)
-    //    //convert to array of [author, likes] pairs for maxBy
-    //    .toPairs()
-    //    //get the pair with most likes (last element in the tuple)
-    //    .maxBy(_.last)
+    const resultArray = maxPropertyValue(likesPerAuthor)
 
     const resultObject = {
         'author': resultArray[0],
@@ -77,11 +62,13 @@ const mostLikes = (blogs) => {
     return resultObject
 }
 
-const calculateMaximum = (object) => {
+// Calculates the maximum value of all properties in an object
+// Returns a pair (array) with property name and value
+const maxPropertyValue = (object) => {
     return _(object)
         //convert to array of pairs for maxBy
         .toPairs()
-        //get the pair with largest last last element
+        //get the pair with largest last element
         .maxBy(_.last)
 }
 
