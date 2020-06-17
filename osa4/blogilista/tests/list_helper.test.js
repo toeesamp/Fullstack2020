@@ -103,3 +103,17 @@ describe('favorite blog', () => {
     })
 })
 
+describe('most blogs', () => {
+    test('most blogs of empty list should be empty object', () => {
+        const result = listHelper.mostBlogs(emptyList)
+        expect(result).toEqual({})
+    })
+    test('Robert C. Martin should have 3 blogs', () => {
+        const result = listHelper.mostBlogs(blogs)
+        expect(result).toEqual(
+            {
+                author: 'Robert C. Martin',
+                blogs: 3
+            })
+    })
+})
