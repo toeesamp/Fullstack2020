@@ -198,9 +198,6 @@ describe('most likes', () => {
                 likes: 7
             })
     })
-    //#############################################
-    //FIXME remove only
-    //#############################################
     test('Edsger W. Dijkstra should have 17 likes', () => {
         const result = listHelper.mostLikes(blogs)
         expect(result).toEqual(
