@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const Blog = require('../models/blog')
+const { initialBlogs } = require('./test_helper')
 
 const api = supertest(app)
 
@@ -10,12 +11,7 @@ const api = supertest(app)
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-
-    let blogObject = new Blog(helper.initialBlogs[0])
-    await blogObject.save()
-
-    blogObject = new Blog(helper.initialBlogs[1])
-    await blogObject.save()
+    await Blog.insertMany(helper.initialBlogs)
 })
 
 test('blogs are returned as json', async () => {
@@ -29,6 +25,12 @@ test('there are two blogs', async () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
+
+test('_id is converted to id', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.map(blog => expect(blog.id).toBeDefined())
+})
+
 
 afterAll(() => {
     mongoose.connection.close()
