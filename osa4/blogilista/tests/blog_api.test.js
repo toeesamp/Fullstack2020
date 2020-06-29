@@ -64,10 +64,33 @@ test('empty likes field results in 0', async () => {
         .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
-    const blogsWithEmptyLikes = response.body.filter(blog => blog.title === 'test3')
-    const likes = blogsWithEmptyLikes.map(blog => blog.likes)
+    const filteredBlogs = response.body.filter(blog => blog.title === 'test3')
+    const likes = filteredBlogs.map(blog => blog.likes)
     expect(likes).toContain(0)
 })
+
+test('new blog without title results in bad request', async () => {
+    const newBlog = {
+        author: 'testauthor4',
+        url: 'testurl4'
+    }
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+})
+
+test('new blog without url results in bad request', async () => {
+    const newBlog = {
+        title: 'test5',
+        url: 'testurl5'
+    }
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+})
+
 
 afterAll(() => {
     mongoose.connection.close()
