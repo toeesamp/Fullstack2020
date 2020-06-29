@@ -44,10 +44,29 @@ test('a valid blog can be added ', async () => {
 
     const response = await api.get('/api/blogs')
 
-    const contents = response.body.map(r => r.title)
+    const titles = response.body.map(r => r.title)
 
     expect(response.body).toHaveLength(initialBlogs.length + 1)
-    expect(contents).toContain('test3')
+    expect(titles).toContain('test3')
+})
+
+test('empty likes field results in 0', async () => {
+    const newBlog = {
+        title: 'test3',
+        author: 'testauthor3',
+        url: 'testurl3'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const blogsWithEmptyLikes = response.body.filter(blog => blog.title === 'test3')
+    const likes = blogsWithEmptyLikes.map(blog => blog.likes)
+    expect(likes).toContain(0)
 })
 
 afterAll(() => {
