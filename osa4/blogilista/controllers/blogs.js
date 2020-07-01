@@ -3,14 +3,6 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-//const getTokenFrom = request => {
-//    const authorization = request.get('authorization')
-//    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-//        return authorization.substring(7)
-//    }
-//    return null
-//}
-
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
         .find({})
@@ -20,7 +12,6 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
-    //const token = getTokenFrom(request)
 
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!request.token || !decodedToken.id) {
@@ -43,7 +34,9 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-    const blog = await Blog.findById(request.params.id)
+    const blog = await Blog
+        .findById(request.params.id)
+        .populate('user', { username: 1, name: 1 })
     if (blog) {
         response.json(blog.toJSON())
     } else {
@@ -52,7 +45,17 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndRemove(request.params.id)
+    const blog = await Blog.findById(request.params.id)
+    console.log(blog)
+
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!request.token || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' })
+    }
+    if ( blog.user.toString() !== decodedToken.id.toString() ) {
+        return response.status(401).json({ error: 'blogs entries can only be deleted by their creator' })
+    }
+    await Blog.findByIdAndRemove(blog._id)
     response.status(204).end()
 })
 

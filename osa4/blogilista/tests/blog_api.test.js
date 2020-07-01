@@ -5,7 +5,7 @@ const helper = require('./test_helper')
 const app = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const { initialBlogs } = require('./test_helper')
+//const { initialBlogs } = require('./test_helper')
 const api = supertest(app)
 
 describe('testing blog api', () => {
