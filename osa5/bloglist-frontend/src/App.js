@@ -6,7 +6,10 @@ import loginService from './services/login'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [newBlogTitle, setNewBlogTitle] = useState('')
+    const [newBlogAuthor, setNewBlogAuthor] = useState('')
+    const [newBlogUrl, setNewBlogUrl] = useState('')
+    const [notification, setNotification] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
@@ -20,11 +23,40 @@ const App = () => {
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
-          const user = JSON.parse(loggedUserJSON)
-          setUser(user)
-          //blogService.setToken(user.token)
+            const user = JSON.parse(loggedUserJSON)
+            setUser(user)
+            blogService.setToken(user.token)
         }
-      }, [])
+    }, [])
+
+    const notificationHelper = (notificationMessage, notificationType, timeout) => {
+        setNotification({ message: notificationMessage, type: notificationType })
+        setTimeout(() => {
+            setNotification(null)
+        }, timeout)
+    }
+
+    const addBlog = (event) => {
+        event.preventDefault()
+        const blogObject = {
+            title: newBlogTitle,
+            author: newBlogAuthor,
+            url: newBlogUrl
+        }
+
+        blogService
+            .create(blogObject)
+            .then(returnedBlog => {
+                setBlogs(blogs.concat(returnedBlog))
+                notificationHelper(`blog added: ${returnedBlog.title}`, 'info', 5000)
+                setNewBlogTitle('')
+                setNewBlogAuthor('')
+                setNewBlogUrl('')
+            })
+            .catch(error => {
+                notificationHelper(`Error occurred while adding blog: ${error}`, 'error', 15000)
+            })
+    }
 
     const handleLogin = async (event) => {
         event.preventDefault()
@@ -42,17 +74,16 @@ const App = () => {
             console.log('user set as ', user)
             setUsername('')
             setPassword('')
+            notificationHelper('succesfully logged in', 'info', 5000)
         } catch (exception) {
-            setErrorMessage('wrong credentials')
-            setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+            notificationHelper('wrong credentials', 'error', 5000)
         }
     }
 
     const handleLogout = () => {
         window.localStorage.removeItem('loggedBlogappUser')
-        window.location.reload(false)
+        setUser(null)
+        notificationHelper('logged out', 'info', 5000)
     }
 
     const loginForm = () => (
@@ -80,24 +111,59 @@ const App = () => {
         </form>
     )
 
-    const blogsList = () => (
-        <>
+    const blogsForm = () => (
+        <form onSubmit={addBlog}>
+
             <h2>blogs</h2>
             <p>
                 Logged in as {user.username} <button onClick={handleLogout}>logout</button>
             </p>
-            
+
+            <h2>create new</h2>
+            <div>
+                title
+                    <input
+                    type="text"
+                    value={newBlogTitle}
+                    name="Title"
+                    onChange={({ target }) => setNewBlogTitle(target.value)}
+                />
+            </div>
+            <div>
+                author
+                    <input
+                    type="text"
+                    value={newBlogAuthor}
+                    name="Author"
+                    onChange={({ target }) => setNewBlogAuthor(target.value)}
+                />
+            </div>
+            <div>
+                url
+                    <input
+                    type="text"
+                    value={newBlogUrl}
+                    name="Author"
+                    onChange={({ target }) => setNewBlogUrl(target.value)}
+                />
+            </div>
+            <button type="submit">create</button>
+
             {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} />
             )}
-        </>
+        </form>
     )
 
     return (
         <div>
-            <Notification message={errorMessage} />
+            {notification === null ?
+                null :
+                <Notification message={notification.message} type={notification.type} />
+            }
+
             {user === null ?
-                loginForm() : blogsList()
+                loginForm() : blogsForm()
             }
         </div>
     )
