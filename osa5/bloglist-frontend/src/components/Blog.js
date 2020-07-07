@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeHandler }) => {
     const [expandedView, setExpandedView] = useState(false)
 
     const blogStyle = {
@@ -23,7 +23,7 @@ const Blog = ({ blog }) => {
                     <br/>
                     {blog.url}
                     <br/>
-                    likes: {blog.likes} <button>like</button>
+                    likes: {blog.likes} <button onClick={likeHandler}>like</button>
                     <br/>
                     {blog.user.username}
                 </div> :

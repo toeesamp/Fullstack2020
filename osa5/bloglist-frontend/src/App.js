@@ -39,6 +39,8 @@ const App = () => {
 
     const addBlog = (blogObject) => {
         newBlogFormRef.current.toggleVisibility()
+        console.log(newBlogFormRef)
+        console.log(newBlogFormRef.current)
         blogService
             .create(blogObject)
             .then(returnedBlog => {
@@ -76,6 +78,16 @@ const App = () => {
         window.localStorage.removeItem('loggedBlogappUser')
         setUser(null)
         notificationHelper('logged out', 'info', 5000)
+    }
+
+    const handleLike = async (blogToUpdate) => {
+        try {
+            blogToUpdate.likes++
+            const result = await blogService.update(blogToUpdate.id, blogToUpdate)
+            setBlogs(blogs.map(blog => blog.id !== result.id ? blog : blogToUpdate))
+        } catch (e) {
+            notificationHelper(`Unable to update likes: ${e}`, 'error', 5000)
+        }
     }
 
     const loginForm = () => (
@@ -125,7 +137,7 @@ const App = () => {
                     <p>Logged in as {user.username} <button onClick={handleLogout}>logout</button></p>
                     {blogsForm()}
                     {blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} />
+                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog)}/>
                     )}
                 </>
             }
