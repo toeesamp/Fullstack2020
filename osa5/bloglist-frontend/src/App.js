@@ -8,9 +8,6 @@ import loginService from './services/login'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [newBlogTitle, setNewBlogTitle] = useState('')
-    const [newBlogAuthor, setNewBlogAuthor] = useState('')
-    const [newBlogUrl, setNewBlogUrl] = useState('')
     const [notification, setNotification] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -38,22 +35,12 @@ const App = () => {
         }, timeout)
     }
 
-    const addBlog = (event) => {
-        event.preventDefault()
-        const blogObject = {
-            title: newBlogTitle,
-            author: newBlogAuthor,
-            url: newBlogUrl
-        }
-
+    const addBlog = (blogObject) => {
         blogService
             .create(blogObject)
             .then(returnedBlog => {
                 setBlogs(blogs.concat(returnedBlog))
                 notificationHelper(`blog added: ${returnedBlog.title}`, 'info', 5000)
-                setNewBlogTitle('')
-                setNewBlogAuthor('')
-                setNewBlogUrl('')
             })
             .catch(error => {
                 notificationHelper(`Error occurred while adding blog: ${error}`, 'error', 15000)
@@ -116,13 +103,7 @@ const App = () => {
     const blogsForm = () => (
         <Togglable buttonLabel='new blog'>
             <NewBlogForm
-                handleAddBlog={addBlog}
-                handleTitleChange={({ target }) => setNewBlogTitle(target.value)}
-                handleAuthorChange={({ target }) => setNewBlogAuthor(target.value)}
-                handleUrlChange={({ target }) => setNewBlogUrl(target.value)}
-                newBlogTitle={newBlogTitle}
-                newBlogAuthor={newBlogAuthor}
-                newBlogUrl={newBlogUrl}
+                createBlog={addBlog}
             />
         </Togglable>
     )
