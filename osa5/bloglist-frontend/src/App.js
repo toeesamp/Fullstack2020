@@ -90,6 +90,26 @@ const App = () => {
         }
     }
 
+    const handleDelete = async (blogToDelete) => {
+        if (!window.confirm(`Delete ${blogToDelete.title}?`)) {
+            return
+        }
+        try {
+            await blogService.deleteBlog(blogToDelete.id)
+            setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id ))
+            notificationHelper(`Deleted ${blogToDelete.title}`, 'info', 5000)
+        } catch (e) {
+            notificationHelper(`Unable to delete ${blogToDelete.title}: ${e}`, 'error', 5000)
+        }
+    }
+
+    const setDeleteHandler = (blog) => {
+        if (blog.user.username !== user.username) {
+            return null
+        }
+        return () => handleDelete(blog)
+    }
+
     const loginForm = () => (
         <form onSubmit={handleLogin}>
             <h2>Log in to application</h2>
@@ -137,7 +157,8 @@ const App = () => {
                     <p>Logged in as {user.username} <button onClick={handleLogout}>logout</button></p>
                     {blogsForm()}
                     {blogs.sort((a,b) => (a.likes > b.likes) ? -1 : 1 ).map(blog =>
-                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog)}/>
+                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog)} 
+                            deleteHandler={setDeleteHandler(blog)} />
                     )}
                 </>
             }
