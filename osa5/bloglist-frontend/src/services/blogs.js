@@ -28,6 +28,6 @@ const update = (id, newObject) => {
 
 const deleteBlog = (id) => {
     return axios.delete(`${baseUrl}/${id}`, config)
-  } 
+}
 
-export default { getAll, create, update, setToken, deleteBlog}
+export default { getAll, create, update, setToken, deleteBlog }

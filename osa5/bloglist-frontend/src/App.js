@@ -96,7 +96,7 @@ const App = () => {
         }
         try {
             await blogService.deleteBlog(blogToDelete.id)
-            setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id ))
+            setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
             notificationHelper(`Deleted ${blogToDelete.title}`, 'info', 5000)
         } catch (e) {
             notificationHelper(`Unable to delete ${blogToDelete.title}: ${e}`, 'error', 5000)
@@ -115,7 +115,7 @@ const App = () => {
             <h2>Log in to application</h2>
             <div>
                 username
-                    <input
+                <input
                     type="text"
                     value={username}
                     name="Username"
@@ -124,7 +124,7 @@ const App = () => {
             </div>
             <div>
                 password
-                    <input
+                <input
                     type="password"
                     value={password}
                     name="Password"
@@ -156,8 +156,8 @@ const App = () => {
                     <h2>blogs</h2>
                     <p>Logged in as {user.username} <button onClick={handleLogout}>logout</button></p>
                     {blogsForm()}
-                    {blogs.sort((a,b) => (a.likes > b.likes) ? -1 : 1 ).map(blog =>
-                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog)} 
+                    {blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
+                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog)}
                             deleteHandler={setDeleteHandler(blog)} />
                     )}
                 </>

@@ -20,18 +20,17 @@ const Blog = ({ blog, likeHandler, deleteHandler }) => {
             {expandedView ?
                 <div style={blogStyle}>
                     {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
-                    <br/>
+                    <br />
                     {blog.url}
-                    <br/>
+                    <br />
                     likes: {blog.likes} <button onClick={likeHandler}>like</button>
-                    <br/>
+                    <br />
                     {blog.user.username}
-                    <br/>
+                    <br />
                     {deleteHandler === null ?
                         null :
                         <button onClick={deleteHandler}>delete</button>
                     }
-                    
                 </div> :
                 <div style={blogStyle}>
                     {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
