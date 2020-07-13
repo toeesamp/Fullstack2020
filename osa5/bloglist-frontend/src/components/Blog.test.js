@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 
 describe('blog render tests', () => {
@@ -8,7 +8,10 @@ describe('blog render tests', () => {
         title: 'testtitle',
         author: 'testauthor',
         url: 'testurl',
-        likes: 12345
+        likes: 12345,
+        user: {
+            username: 'testuser'
+        }
     }
 
     let component
@@ -22,9 +25,6 @@ describe('blog render tests', () => {
     test('renders content', () => {
         expect(component.container).toHaveTextContent(
             'testtitle'
-        )
-        expect(component.container).toHaveTextContent(
-            'testauthor'
         )
     })
 
@@ -42,4 +42,24 @@ describe('blog render tests', () => {
             '12345'
         )
     })
+
+    test('render url and likes after clicking view', () => {
+        expect(component.container).toHaveTextContent(
+            'testtitle'
+        )
+        expect(component.container).toHaveTextContent(
+            'testauthor'
+        )
+
+        const button = component.getByText('view')
+        fireEvent.click(button)
+
+        expect(component.container).toHaveTextContent(
+            'testurl'
+        )
+        expect(component.container).toHaveTextContent(
+            '12345'
+        )
+    })
+
 })
