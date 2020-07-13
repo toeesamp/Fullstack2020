@@ -16,7 +16,7 @@ const Blog = ({ blog, likeHandler, deleteHandler }) => {
     }
 
     return (
-        <>
+        <div className='blog'>
             {expandedView ?
                 <div style={blogStyle}>
                     {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
@@ -36,7 +36,7 @@ const Blog = ({ blog, likeHandler, deleteHandler }) => {
                     {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
                 </div>
             }
-        </>
+        </div>
     )
 }
 
