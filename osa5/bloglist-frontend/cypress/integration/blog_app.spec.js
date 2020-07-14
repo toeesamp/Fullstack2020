@@ -39,4 +39,52 @@ describe('Blog app', function () {
                 .and('have.css', 'border-style', 'solid')
         })
     })
+
+    describe('When logged in', function () {
+        beforeEach(function () {
+            cy.get('#username').type('test')
+            cy.get('#password').type('test')
+            cy.get('#login-button').click()
+
+            cy.get('.info').contains('succesfully logged in')
+            cy.contains('Logged in as test')
+        })
+
+        it('A blog can be created', function () {
+            cy.contains('new blog').click()
+            cy.get('#title').type('testtitle')
+            cy.get('#author').type('testauthor')
+            cy.get('#url').type('testurl')
+            cy.get('#create-blog-button').click()
+
+            cy.contains('testtitle')
+            cy.contains('testauthor')
+        })
+
+        it('A blog can be liked', function () {
+            cy.contains('new blog').click()
+            cy.get('#title').type('testtitle')
+            cy.get('#author').type('testauthor')
+            cy.get('#url').type('testurl')
+            cy.get('#create-blog-button').click()
+
+            cy.contains('testtitle testauthor')
+                .contains('view')
+                .click()
+
+            cy.contains('testtitle testauthor')
+                .contains('likes: 0')
+
+
+
+            cy.contains('testtitle testauthor')
+                .contains('like')
+                .click()
+
+            cy.contains('testtitle testauthor')
+                .contains('likes: 1')
+
+        })
+    })
+
 })
