@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
-//import ReactDOM from 'react-dom'
 
 import {
     Switch,
     Route,
     Link,
-    Redirect,
     useRouteMatch,
     useHistory,
 } from "react-router-dom"
@@ -41,7 +39,7 @@ const Anecdote = ({ anecdote }) => {
       <div>
         <h2>{anecdote.content} by {anecdote.author}</h2>
         <div>has {anecdote.votes} votes</div>
-        <div>for more info see <a href="{anecdote.info}">{anecdote.info}</a></div>
+        <div>for more info see <a href={anecdote.info}>{anecdote.info}</a></div>
       </div>
     )
   }
@@ -59,6 +57,26 @@ const About = () => (
         <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
     </div>
 )
+
+const Notification = (props) => {
+    const notification = props.notification
+    
+    const style = {
+        border: 'solid',
+        padding: 10,
+        borderWidth: 1
+    }
+    return (
+        <>
+            {notification === '' ?
+                null :
+                <div style={style}>
+                    {notification}
+                </div>
+            }
+        </>
+    )
+}
 
 const Footer = () => (
     <div>
@@ -126,10 +144,16 @@ const App = () => {
     ])
 
     const [notification, setNotification] = useState('')
+    const history = useHistory()
 
     const addNew = (anecdote) => {
         anecdote.id = (Math.random() * 10000).toFixed(0)
         setAnecdotes(anecdotes.concat(anecdote))
+        history.push('/')
+        setNotification(`a new anecdote ${anecdote.content} added!`)
+        setTimeout(() => {
+            setNotification('')
+        }, 10000);
     }
 
     const match = useRouteMatch('/anecdotes/:id')
@@ -155,6 +179,7 @@ const App = () => {
         <div>
             <h1>Software anecdotes</h1>
             <Menu />
+            <Notification notification={notification}/>
             <Switch>
                 <Route path="/about">
                     <About />
