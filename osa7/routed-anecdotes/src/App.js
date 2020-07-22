@@ -92,6 +92,10 @@ const CreateNew = (props) => {
     const author = useField('text')
     const info = useField('url')
 
+    const {reset: contentReset, ...contentRest} = content
+    const {reset: authorReset, ...authorRest} = author
+    const {reset: infoReset, ...infoRest} = info
+
     const handleSubmit = (e) => {
         e.preventDefault()
         props.addNew({
@@ -102,34 +106,37 @@ const CreateNew = (props) => {
         })
     }
 
-    const reset = (e) => {
+    const resetInputs = (e) => {
         e.preventDefault()
-        content.reset()
-        author.reset()
-        info.reset()
+        //contentReset()
+        //authorReset()
+        //infoReset()
+        //content.reset()
+        //author.reset()
+        //info.reset()
     }
+
     return (
         <div>
             <h2>create a new anecdote</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     content
-                    <input {...content} />
+                    <input {...contentRest} />
                 </div>
                 <div>
                     author
-                    <input {...author} />
+                    <input {...authorRest} />
                 </div>
                 <div>
                     url for more info
-                    <input {...info} />
+                    <input {...infoRest} />
                 </div>
                 <button>create</button>
-                <button onClick={reset}>reset</button>
+                <button onClick={resetInputs}>reset</button>
             </form>
         </div>
     )
-
 }
 
 const App = () => {
