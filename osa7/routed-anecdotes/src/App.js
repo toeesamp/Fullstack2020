@@ -108,12 +108,9 @@ const CreateNew = (props) => {
 
     const resetInputs = (e) => {
         e.preventDefault()
-        //contentReset()
-        //authorReset()
-        //infoReset()
-        //content.reset()
-        //author.reset()
-        //info.reset()
+        contentReset()
+        authorReset()
+        infoReset()
     }
 
     return (

@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
+
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [notification, setNotification] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
 
     const newBlogFormRef = useRef()
+    const dispatch = useDispatch()
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -30,13 +33,6 @@ const App = () => {
         }
     }, [])
 
-    const notificationHelper = (notificationMessage, notificationType, timeout) => {
-        setNotification({ message: notificationMessage, type: notificationType })
-        setTimeout(() => {
-            setNotification(null)
-        }, timeout)
-    }
-
     const addBlog = (blogObject) => {
         newBlogFormRef.current.toggleVisibility()
         console.log(newBlogFormRef)
@@ -45,10 +41,10 @@ const App = () => {
             .create(blogObject)
             .then(returnedBlog => {
                 setBlogs(blogs.concat(returnedBlog))
-                notificationHelper(`blog added: ${returnedBlog.title}`, 'info', 5000)
+                dispatch(setNotification(`blog added: ${returnedBlog.title}`, 'info', 5))
             })
             .catch(error => {
-                notificationHelper(`Error occurred while adding blog: ${error}`, 'error', 15000)
+                dispatch(setNotification(`Error occurred while adding blog: ${error}`, 'error', 15))
             })
     }
 
@@ -68,16 +64,16 @@ const App = () => {
             //console.log('user set as ', user)
             setUsername('')
             setPassword('')
-            notificationHelper('succesfully logged in', 'info', 5000)
+            dispatch(setNotification('succesfully logged in', 'info', 5))
         } catch (exception) {
-            notificationHelper('wrong credentials', 'error', 5000)
+            dispatch(setNotification('wrong credentials', 'error', 5))
         }
     }
 
     const handleLogout = () => {
         window.localStorage.removeItem('loggedBlogappUser')
         setUser(null)
-        notificationHelper('logged out', 'info', 5000)
+        dispatch(setNotification('logged out', 'info', 5))
     }
 
     const handleLike = async (blogToUpdate) => {
@@ -86,7 +82,7 @@ const App = () => {
             const result = await blogService.update(blogToUpdate.id, blogToUpdate)
             setBlogs(blogs.map(blog => blog.id !== result.id ? blog : blogToUpdate))
         } catch (e) {
-            notificationHelper(`Unable to update likes: ${e}`, 'error', 5000)
+            dispatch(setNotification(`Unable to update likes: ${e}`, 'error', 5))
         }
     }
 
@@ -97,9 +93,9 @@ const App = () => {
         try {
             await blogService.deleteBlog(blogToDelete.id)
             setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-            notificationHelper(`Deleted ${blogToDelete.title}`, 'info', 5000)
+            dispatch(setNotification(`Deleted ${blogToDelete.title}`, 'info', 5))
         } catch (e) {
-            notificationHelper(`Unable to delete ${blogToDelete.title}: ${e}`, 'error', 5000)
+            dispatch(setNotification(`Unable to delete ${blogToDelete.title}: ${e}`, 'error', 5))
         }
     }
 
@@ -147,10 +143,7 @@ const App = () => {
 
     return (
         <div>
-            {notification === null ?
-                null :
-                <Notification message={notification.message} type={notification.type} />
-            }
+            <Notification  />
 
             {user === null ?
                 loginForm() :
