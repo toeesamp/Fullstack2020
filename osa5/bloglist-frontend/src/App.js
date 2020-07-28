@@ -8,10 +8,9 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, createBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 
 const App = () => {
-    //const [blogs, setBlogs] = useState([])
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
@@ -73,27 +72,18 @@ const App = () => {
         dispatch(setNotification('logged out', 'info', 5))
     }
 
-    const handleLike = async (blogToUpdate) => {
-        try {
-            blogToUpdate.likes++
-            //const result = await blogService.update(blogToUpdate.id, blogToUpdate)
-            //setBlogs(blogs.map(blog => blog.id !== result.id ? blog : blogToUpdate))
-        } catch (e) {
-            dispatch(setNotification(`Unable to update likes: ${e}`, 'error', 5))
-        }
+    const handleLike = async (id) => {
+        const blogToLike = blogs.find(blog => blog.id === id)
+        dispatch(likeBlog(blogToLike))
+        dispatch(setNotification(`you liked '${blogToLike.title}'`, 'info', 5))
     }
 
     const handleDelete = async (blogToDelete) => {
-        if (!window.confirm(`Delete ${blogToDelete.title}?`)) {
-            return
-        }
-        try {
-            await blogService.deleteBlog(blogToDelete.id)
-            //setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-            dispatch(setNotification(`Deleted ${blogToDelete.title}`, 'info', 5))
-        } catch (e) {
-            dispatch(setNotification(`Unable to delete ${blogToDelete.title}: ${e}`, 'error', 5))
-        }
+        dispatch(deleteBlog(blogToDelete.id))
+            .then(dispatch(setNotification(`Deleted ${blogToDelete.title}`, 'info', 5)))
+            .catch(e => {
+                dispatch(setNotification(`Unable to delete ${blogToDelete.title}: ${e}`, 'error', 5))
+            })
     }
 
     const setDeleteHandler = (blog) => {
@@ -149,7 +139,7 @@ const App = () => {
                     <p>Logged in as {user.username} <button onClick={handleLogout}>logout</button></p>
                     {blogsForm()}
                     {blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
-                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog)}
+                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog.id)}
                             deleteHandler={setDeleteHandler(blog)} />
                     )}
                 </>

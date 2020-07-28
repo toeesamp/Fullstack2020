@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
 const Notification = () => {
@@ -14,11 +13,6 @@ const Notification = () => {
             {notification.text}
         </div>
     )
-}
-
-Notification.propTypes = {
-    message: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired
 }
 
 export default Notification

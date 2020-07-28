@@ -4,23 +4,34 @@ const blogReducer = (state = [], action) => {
     console.log('state now: ', state)
     console.log('action', action)
     switch (action.type) {
-    //TODO: like
-    //case 'VOTE':
-    //    const id = action.data.id
-    //    const anecdoteToChange = state.find(o => o.id === id)
-    //    const changedAnecdote = {
-    //        ...anecdoteToChange,
-    //        votes: anecdoteToChange.votes + 1
-    //    }
-    //    return state.map(anecdote =>
-    //        anecdote.id !== id ? anecdote : changedAnecdote
-    //    )
-    case 'NEW_BLOG':
-        return [...state, action.data]
-    case 'INIT_BLOGS':
-        return action.data
-    default:
-        return state
+        case 'LIKE': {
+            // blogService.update does not return all blog fields so we can't
+            // just take action.data by itself
+            let likedBlog = state.find(o => o.id === action.data.id)
+            likedBlog = { ...likedBlog, likes: action.data.likes }
+            return state.map(blog => blog.id === likedBlog.id ? likedBlog : blog)
+        }
+        case 'NEW_BLOG':
+            return [...state, action.data]
+        case 'INIT_BLOGS':
+            return action.data
+        case 'DELETE_BLOG': {
+            const deletedId = action.data.id
+            return state.filter(blog => blog.id !== deletedId)
+        }
+        default:
+            return state
+    }
+}
+
+export const likeBlog = (blog) => {
+    return async dispatch => {
+        const blogToLike = { ...blog, likes: blog.likes + 1 }
+        const data = await blogService.update(blogToLike)
+        dispatch({
+            type: 'LIKE',
+            data
+        })
     }
 }
 
@@ -40,6 +51,16 @@ export const initializeBlogs = () => {
         dispatch({
             type: 'INIT_BLOGS',
             data: blogs
+        })
+    }
+}
+
+export const deleteBlog = (id) => {
+    return async dispatch => {
+        await blogService.deleteBlog(id)
+        dispatch({
+            type: 'DELETE_BLOG',
+            data: { id }
         })
     }
 }
