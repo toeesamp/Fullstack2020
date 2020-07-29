@@ -5,19 +5,18 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
+import { login, logout, setUser } from './reducers/userReducer'
 
 const App = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [user, setUser] = useState(null)
 
     const newBlogFormRef = useRef()
     const dispatch = useDispatch()
     const blogs = useSelector(state => state.blogs)
+    const user = useSelector(state => state.user)
 
     useEffect(() => {
         dispatch(initializeBlogs())
@@ -27,58 +26,52 @@ const App = () => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-            blogService.setToken(user.token)
+            dispatch(setUser(user))
         }
-    }, [])
+    }, [dispatch])
 
     const addBlog = (blogObject) => {
         newBlogFormRef.current.toggleVisibility()
-        console.log(newBlogFormRef)
-        console.log(newBlogFormRef.current)
         dispatch(createBlog(blogObject))
             .then(dispatch(setNotification(`blog added: ${blogObject.title}`, 'info', 5)))
             .catch(error => {
                 dispatch(setNotification(`Error occurred while adding blog: ${error}`, 'error', 15))
             })
-
     }
 
-    const handleLogin = async (event) => {
+    const handleLogin = (event) => {
         event.preventDefault()
-        //console.log('logging in with', username, password)
-        try {
-            const user = await loginService.login({
-                username, password,
-            })
-
-            window.localStorage.setItem(
-                'loggedBlogappUser', JSON.stringify(user)
+        //try {
+        dispatch(login(username, password))
+            .then(
+                dispatch(setNotification('succesfully logged in', 'info', 5))
             )
-            blogService.setToken(user.token)
-            setUser(user)
-            //console.log('user set as ', user)
-            setUsername('')
-            setPassword('')
-            dispatch(setNotification('succesfully logged in', 'info', 5))
-        } catch (exception) {
-            dispatch(setNotification('wrong credentials', 'error', 5))
-        }
+            .catch(error => {
+                console.log(error.response.data.error)
+                dispatch(setNotification(`error logging in ${error}`, 'error', 5))
+            })
+        setUsername('')
+        setPassword('')
+        //    dispatch(setNotification('succesfully logged in', 'info', 5))
+        //} catch (exception) {
+        //    dispatch(setNotification('wrong credentials', 'error', 5))
+        //}
     }
 
     const handleLogout = () => {
         window.localStorage.removeItem('loggedBlogappUser')
-        setUser(null)
+        //setUser(null)'
+        dispatch(logout())
         dispatch(setNotification('logged out', 'info', 5))
     }
 
-    const handleLike = async (id) => {
+    const handleLike = (id) => {
         const blogToLike = blogs.find(blog => blog.id === id)
         dispatch(likeBlog(blogToLike))
         dispatch(setNotification(`you liked '${blogToLike.title}'`, 'info', 5))
     }
 
-    const handleDelete = async (blogToDelete) => {
+    const handleDelete = (blogToDelete) => {
         dispatch(deleteBlog(blogToDelete.id))
             .then(dispatch(setNotification(`Deleted ${blogToDelete.title}`, 'info', 5)))
             .catch(e => {
