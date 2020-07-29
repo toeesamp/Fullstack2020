@@ -1,13 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import {
+    Switch,
+    Route,
+    Link,
+    Redirect,
+    useRouteMatch,
+    useHistory,
+} from 'react-router-dom'
 
 import Blog from './components/Blog'
+import Users from './components/Users'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 import { login, logout, setUser } from './reducers/userReducer'
+import { getUsers } from './reducers/usersReducer'
 
 const App = () => {
     const [username, setUsername] = useState('')
@@ -17,9 +27,14 @@ const App = () => {
     const dispatch = useDispatch()
     const blogs = useSelector(state => state.blogs)
     const user = useSelector(state => state.user)
+    const users = useSelector(state => state.users)
+
+    //TODO kuuluuko tähän?
+    const history = useHistory()
 
     useEffect(() => {
         dispatch(initializeBlogs())
+        dispatch(getUsers())
     }, [dispatch])
 
     useEffect(() => {
@@ -124,19 +139,32 @@ const App = () => {
     return (
         <div>
             <Notification />
-
-            {user === null ?
-                loginForm() :
-                <>
-                    <h2>blogs</h2>
-                    <p>Logged in as {user.username} <button onClick={handleLogout}>logout</button></p>
-                    {blogsForm()}
-                    {blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
-                        <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog.id)}
-                            deleteHandler={setDeleteHandler(blog)} />
-                    )}
-                </>
+            <h2>blogs</h2>
+            {user &&
+                <p>Logged in as {user.username} <button onClick={handleLogout}>logout</button></p>
             }
+            <Switch>
+                <Route path="/users">
+                    <Users users={users} />
+                </Route>
+                <Route path="/login">
+                    {loginForm()}
+                </Route>
+                <Route path="/">
+
+                    {user === null ?
+                        loginForm() :
+                        <>
+                            {blogsForm()}
+                            {blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
+                                <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog.id)}
+                                    deleteHandler={setDeleteHandler(blog)} />
+                            )}
+                        </>
+                    }
+                </Route>
+            </Switch>
+
         </div>
     )
 }
