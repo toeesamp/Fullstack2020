@@ -10,7 +10,7 @@ import {
 } from 'react-router-dom'
 
 import Blog from './components/Blog'
-import Users from './components/Users'
+//import Users from './components/Users'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
@@ -26,7 +26,7 @@ const App = () => {
     const newBlogFormRef = useRef()
     const dispatch = useDispatch()
     const blogs = useSelector(state => state.blogs)
-    const user = useSelector(state => state.user)
+    const loggedInUser = useSelector(state => state.user)
     const users = useSelector(state => state.users)
 
     //TODO kuuluuko tähän?
@@ -95,7 +95,7 @@ const App = () => {
     }
 
     const setDeleteHandler = (blog) => {
-        if (blog.user.username !== user.username) {
+        if (blog.user.username !== loggedInUser.username) {
             return null
         }
         return () => handleDelete(blog)
@@ -136,14 +136,67 @@ const App = () => {
         </Togglable>
     )
 
+    const Users = ({ users }) => {
+        //const Users = () => {
+        return (
+            <>
+                <h2>users</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>blogs created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users &&
+                            users.map(user =>
+                                <tr key={user.id}>
+                                    <td><Link to={`/users/${user.id}`}>{user.username}</Link></td>
+                                    <td>{user.blogs.length}</td>
+                                </tr>
+                            )}
+                    </tbody>
+                </table>
+            </>
+        )
+    }
+
+    const User = () => {
+        //TODO tänne vai alkuun?
+        const userRouteMatcher = useRouteMatch('/users/:id')
+        if (!users) {
+            return null
+        }
+        const user = userRouteMatcher
+            ? users.find(userMatch => userMatch.id.valueOf() === userRouteMatcher.params.id.valueOf())
+            : null
+        if (!user) {
+            return null
+        }
+        //console.log(users)
+        return (
+            <>
+                <h2>{user.name ? user.name : user.username}</h2>
+                <h3>added blogs</h3>
+                {user.blogs.map(blog =>
+                    <li key={blog.id}>{blog.title}</li>
+                )}
+            </>
+        )
+    }
+
     return (
         <div>
             <Notification />
             <h2>blogs</h2>
-            {user &&
-                <p>Logged in as {user.username} <button onClick={handleLogout}>logout</button></p>
+            {loggedInUser &&
+                <p>Logged in as {loggedInUser.username} <button onClick={handleLogout}>logout</button></p>
             }
             <Switch>
+                <Route path="/users/:id">
+                    <User />
+                </Route>
                 <Route path="/users">
                     <Users users={users} />
                 </Route>
@@ -152,7 +205,7 @@ const App = () => {
                 </Route>
                 <Route path="/">
 
-                    {user === null ?
+                    {loggedInUser === null ?
                         loginForm() :
                         <>
                             {blogsForm()}
