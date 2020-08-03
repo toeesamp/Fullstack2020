@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+import { Link } from 'react-router-dom'
 const Blog = ({ blog, likeHandler, deleteHandler }) => {
     const [expandedView, setExpandedView] = useState(false)
 
@@ -19,7 +19,7 @@ const Blog = ({ blog, likeHandler, deleteHandler }) => {
         <div className='blog'>
             {expandedView ?
                 <div style={blogStyle}>
-                    {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
+                    <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link><button onClick={toggleVisibility}>hide</button>
                     <br />
                     {blog.url}
                     <br />
@@ -33,7 +33,7 @@ const Blog = ({ blog, likeHandler, deleteHandler }) => {
                     }
                 </div> :
                 <div style={blogStyle}>
-                    {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
+                    <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link><button onClick={toggleVisibility}>show</button>
                 </div>
             }
         </div>

@@ -29,6 +29,12 @@ const App = () => {
     const loggedInUser = useSelector(state => state.user)
     const users = useSelector(state => state.users)
 
+
+    const blogRouteMatcher = useRouteMatch('/blogs/:id')
+    const blogMatch = blogRouteMatcher
+        ? blogs.find(blog => blog.id.valueOf() === blogRouteMatcher.params.id.valueOf())
+        : null
+
     //TODO kuuluuko tähän?
     const history = useHistory()
 
@@ -186,6 +192,17 @@ const App = () => {
         )
     }
 
+    const BlogDetails = ({ blog, likeHandler, deleteHandler }) => {
+        return (
+            <>
+                <h2>{blog.title} {blog.author}</h2>
+                <a href={blog.url}>{blog.url}</a>
+                <p>likes: {blog.likes} <button onClick={likeHandler}>like</button></p>
+                <p>added by {blog.user.name ? blog.user.name : blog.user.username}</p>
+            </>
+        )
+    }
+
     return (
         <div>
             <Notification />
@@ -194,6 +211,12 @@ const App = () => {
                 <p>Logged in as {loggedInUser.username} <button onClick={handleLogout}>logout</button></p>
             }
             <Switch>
+                <Route path="/blogs/:id">
+                    {blogMatch &&
+                        <BlogDetails blog={blogMatch} likeHandler={() => handleLike(blogMatch.id)}
+                            deleteHandler={setDeleteHandler(blogMatch)} />
+                    }
+                </Route>
                 <Route path="/users/:id">
                     <User />
                 </Route>
