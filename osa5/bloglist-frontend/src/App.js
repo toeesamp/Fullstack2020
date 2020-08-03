@@ -203,8 +203,20 @@ const App = () => {
         )
     }
 
+    const padding = {
+        padding: 5
+    }
+
     return (
         <div>
+            <div style={{ backgroundColor: 'grey' }}>
+                <Link style={padding} to="/">blogs</Link>
+                <Link style={padding} to="/users">users</Link>
+                {loggedInUser
+                    ? <span style={padding}>{loggedInUser.name ? loggedInUser.name : loggedInUser.username} logged in</span>
+                    : <Link style={padding} to="/login">login</Link>
+                }
+            </div>
             <Notification />
             <h2>blogs</h2>
             {loggedInUser &&
