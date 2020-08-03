@@ -1,9 +1,11 @@
-POST http://localhost:3001/api/blogs
+PUT http://localhost:3001/api/blogs/5f280ca379932b3f1c058961
 content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiI1ZjFlYWE2NmU5OGJkNTgxMWMxYTIyZWUiLCJpYXQiOjE1OTY0NjAxMDd9.8QnaGobKdoZxjYuqtqHKSEL2jS8R0hndMRUOJg70ojA
 
 {
+    "comments": ["nice", "boo"],
     "title": "comment test",
     "author": "testauthor",
-    "url": "testurl"
+    "url": "testurl",
+    "likes": 0
 }

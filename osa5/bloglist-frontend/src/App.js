@@ -199,6 +199,8 @@ const App = () => {
                 <a href={blog.url}>{blog.url}</a>
                 <p>likes: {blog.likes} <button onClick={likeHandler}>like</button></p>
                 <p>added by {blog.user.name ? blog.user.name : blog.user.username}</p>
+                <h3>comments</h3>
+                {blog.comments.map(comment => <li key={blog.id+comment}>{comment}</li>)}
             </>
         )
     }
