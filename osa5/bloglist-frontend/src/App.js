@@ -7,6 +7,7 @@ import {
     useRouteMatch,
     useHistory,
 } from 'react-router-dom'
+import { Form, Button, Navbar, Nav } from 'react-bootstrap'
 
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
@@ -51,9 +52,9 @@ const App = () => {
     const addBlog = (blogObject) => {
         newBlogFormRef.current.toggleVisibility()
         dispatch(createBlog(blogObject))
-            .then(dispatch(setNotification(`blog added: ${blogObject.title}`, 'info', 5)))
+            .then(dispatch(setNotification(`blog added: ${blogObject.title}`, 'success', 5)))
             .catch(error => {
-                dispatch(setNotification(`Error occurred while adding blog: ${error}`, 'error', 15))
+                dispatch(setNotification(`Error occurred while adding blog: ${error}`, 'danger', 15))
             })
     }
 
@@ -61,11 +62,11 @@ const App = () => {
         event.preventDefault()
         dispatch(login(username, password))
             .then(
-                dispatch(setNotification('succesfully logged in', 'info', 5))
+                dispatch(setNotification('succesfully logged in', 'success', 5))
             )
             .catch(error => {
                 console.log(error.response.data.error)
-                dispatch(setNotification(`error logging in ${error}`, 'error', 5))
+                dispatch(setNotification(`error logging in ${error}`, 'danger', 5))
             })
         setUsername('')
         setPassword('')
@@ -75,20 +76,20 @@ const App = () => {
     const handleLogout = () => {
         window.localStorage.removeItem('loggedBlogappUser')
         dispatch(logout())
-        dispatch(setNotification('logged out', 'info', 5))
+        dispatch(setNotification('logged out', 'success', 5))
     }
 
     const handleLike = (id) => {
         const blogToLike = blogs.find(blog => blog.id === id)
         dispatch(likeBlog(blogToLike))
-        dispatch(setNotification(`you liked '${blogToLike.title}'`, 'info', 5))
+        dispatch(setNotification(`you liked '${blogToLike.title}'`, 'success', 5))
     }
 
     const handleDelete = (blogToDelete) => {
         dispatch(deleteBlog(blogToDelete.id))
-            .then(dispatch(setNotification(`Deleted ${blogToDelete.title}`, 'info', 5)))
+            .then(dispatch(setNotification(`Deleted ${blogToDelete.title}`, 'success', 5)))
             .catch(e => {
-                dispatch(setNotification(`Unable to delete ${blogToDelete.title}: ${e}`, 'error', 5))
+                dispatch(setNotification(`Unable to delete ${blogToDelete.title}: ${e}`, 'danger', 5))
             })
     }
 
@@ -103,30 +104,30 @@ const App = () => {
     }
 
     const loginForm = () => (
-        <form onSubmit={handleLogin}>
-            <h2>Log in to application</h2>
-            <div>
-                username
-                <input
+        <Form onSubmit={handleLogin}>
+            <Form.Group>
+                <h2>Log in to application</h2>
+                <Form.Label>username:</Form.Label>
+                <Form.Control
                     id='username'
                     type="text"
                     value={username}
                     name="Username"
                     onChange={({ target }) => setUsername(target.value)}
                 />
-            </div>
-            <div>
-                password
-                <input
+
+                <Form.Label>password:</Form.Label>
+                <Form.Control
                     id='password'
                     type="password"
                     value={password}
                     name="Password"
                     onChange={({ target }) => setPassword(target.value)}
                 />
-            </div>
-            <button id="login-button" type="submit">login</button>
-        </form>
+
+                <Button variant="primary" id="login-button" type="submit">login</Button>
+            </Form.Group>
+        </Form>
     )
 
     const blogForm = () => (
@@ -191,11 +192,11 @@ const App = () => {
 
         dispatch(addComment(blog, newComment))
             .then(
-                dispatch(setNotification(`added comment ${newComment}`, 'info', 5))
+                dispatch(setNotification(`added comment ${newComment}`, 'success', 5))
             )
             .catch(error => {
                 console.log(error.response.data.error)
-                dispatch(setNotification(`error adding comment ${error}`, 'error', 5))
+                dispatch(setNotification(`error adding comment ${error}`, 'danger', 5))
             })
         setNewComment('')
     }
@@ -233,15 +234,26 @@ const App = () => {
     }
 
     return (
-        <div>
-            <div style={{ backgroundColor: 'grey' }}>
-                <Link style={padding} to="/">blogs</Link>
-                <Link style={padding} to="/users">users</Link>
-                {loggedInUser
-                    ? <span style={padding}> logged in as {loggedInUser.name ? loggedInUser.name : loggedInUser.username} <button onClick={handleLogout}>logout</button></span>
-                    : <Link style={padding} to="/login">login</Link>
-                }
-            </div>
+        <div className="container">
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav">
+                    <Nav className="mr-auto">
+                        <Nav.Link href="#" as="span">
+                            <Link style={padding} to="/">blogs</Link>
+                        </Nav.Link>
+                        <Nav.Link href="#" as="span">
+                            <Link style={padding} to="/users">users</Link>
+                        </Nav.Link>
+                        <Nav.Link href="#" as="span">
+                            {loggedInUser
+                                ? <span style={padding}> logged in as {loggedInUser.name ? loggedInUser.name : loggedInUser.username} <button onClick={handleLogout}>logout</button></span>
+                                : <Link style={padding} to="/login">login</Link>
+                            }
+                        </Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
             <Notification />
             <h2>blog app</h2>
             <Switch>

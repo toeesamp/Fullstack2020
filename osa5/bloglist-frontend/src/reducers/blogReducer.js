@@ -1,8 +1,6 @@
 import blogService from '../services/blogs'
 
 const blogReducer = (state = [], action) => {
-    console.log('state now: ', state)
-    console.log('action', action)
     switch (action.type) {
         case 'LIKE': {
             // blogService.update does not return all blog fields so we can't

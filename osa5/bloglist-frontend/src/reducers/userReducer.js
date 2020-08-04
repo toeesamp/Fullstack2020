@@ -14,7 +14,6 @@ const userReducer = (state = null, action) => {
 
 export const setUser = (data) => {
     return async dispatch => {
-        console.log('setuser data', data)
         blogService.setToken(data.token)
         dispatch({
             type: 'LOGIN',
@@ -27,7 +26,6 @@ export const setUser = (data) => {
 export const login = (username, password) => {
     return async dispatch => {
         const data = await loginService.login({ username, password })
-        console.log('login data', data)
         blogService.setToken(data.token)
         window.localStorage.setItem('loggedBlogappUser', JSON.stringify(data))
         dispatch({
