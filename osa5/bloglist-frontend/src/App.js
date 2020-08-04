@@ -15,7 +15,7 @@ import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, likeBlog, deleteBlog, addComment } from './reducers/blogReducer'
 import { login, logout, setUser } from './reducers/userReducer'
 import { getUsers } from './reducers/usersReducer'
 
@@ -101,6 +101,9 @@ const App = () => {
     }
 
     const setDeleteHandler = (blog) => {
+        if (!loggedInUser) {
+            return null
+        }
         if (blog.user.username !== loggedInUser.username) {
             return null
         }
@@ -192,6 +195,24 @@ const App = () => {
         )
     }
 
+    const [newComment, setNewComment] = useState('')
+
+    const handleNewComment = (event) => {
+        event.preventDefault()
+
+        //FIXME blog placeholder
+        console.log('first blog', blogs[1])
+        console.log('comment', newComment)
+        dispatch(addComment(blogs[1], newComment))
+            .then(
+                dispatch(setNotification(`added comment ${newComment}`, 'info', 5))
+            )
+            .catch(error => {
+                console.log(error.response.data.error)
+                dispatch(setNotification(`error adding comment ${error}`, 'error', 5))
+            })
+        setNewComment('')
+    }
     const BlogDetails = ({ blog, likeHandler, deleteHandler }) => {
         return (
             <>
@@ -200,10 +221,26 @@ const App = () => {
                 <p>likes: {blog.likes} <button onClick={likeHandler}>like</button></p>
                 <p>added by {blog.user.name ? blog.user.name : blog.user.username}</p>
                 <h3>comments</h3>
-                {blog.comments.map(comment => <li key={blog.id+comment}>{comment}</li>)}
+
+                {commentForm()}
+                {blog.comments.map(comment => <li key={blog.id + comment}>{comment}</li>)}
             </>
         )
     }
+
+    const commentForm = () => (
+        <form onSubmit={handleNewComment}>
+            <input
+                id='comment'
+                type="text"
+                value={newComment}
+                name="NewComment"
+                onChange={({ target }) => setNewComment(target.value)}
+                autoFocus
+            />
+            <button id="comment-button" type="submit">add comment</button>
+        </form>
+    )
 
     const padding = {
         padding: 5

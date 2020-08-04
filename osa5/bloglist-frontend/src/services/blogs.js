@@ -30,4 +30,9 @@ const deleteBlog = (id) => {
     return axios.delete(`${baseUrl}/${id}`, config)
 }
 
-export default { getAll, create, update, setToken, deleteBlog }
+const addComment = (blog) => {
+    const request = axios.post(`${baseUrl}/${blog.id}/comments`, blog)
+    return request.then(response => response.data)
+}
+
+export default { getAll, create, update, setToken, deleteBlog, addComment }
