@@ -35,7 +35,6 @@ const App = () => {
         ? blogs.find(blog => blog.id.valueOf() === blogRouteMatcher.params.id.valueOf())
         : null
 
-    //TODO kuuluuko tähän?
     const history = useHistory()
 
     useEffect(() => {
@@ -252,15 +251,12 @@ const App = () => {
                 <Link style={padding} to="/">blogs</Link>
                 <Link style={padding} to="/users">users</Link>
                 {loggedInUser
-                    ? <span style={padding}>{loggedInUser.name ? loggedInUser.name : loggedInUser.username} logged in</span>
+                    ? <span style={padding}> logged in as {loggedInUser.name ? loggedInUser.name : loggedInUser.username} <button onClick={handleLogout}>logout</button></span>
                     : <Link style={padding} to="/login">login</Link>
                 }
             </div>
             <Notification />
-            <h2>blogs</h2>
-            {loggedInUser &&
-                <p>Logged in as {loggedInUser.username} <button onClick={handleLogout}>logout</button></p>
-            }
+            <h2>blog app</h2>
             <Switch>
                 <Route path="/blogs/:id">
                     {blogMatch &&
@@ -279,15 +275,15 @@ const App = () => {
                 </Route>
                 <Route path="/">
 
-                    {loggedInUser === null ?
-                        loginForm() :
+                    {loggedInUser ?
                         <>
                             {blogsForm()}
                             {blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
                                 <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog.id)}
                                     deleteHandler={setDeleteHandler(blog)} />
                             )}
-                        </>
+                        </> :
+                        <Redirect to="/login" />
                     }
                 </Route>
             </Switch>
