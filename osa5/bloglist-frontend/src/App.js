@@ -4,15 +4,13 @@ import {
     Switch,
     Route,
     Link,
-    Redirect,
     useRouteMatch,
     useHistory,
 } from 'react-router-dom'
 
-import Blog from './components/Blog'
-//import Users from './components/Users'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
+import BlogList from './components/BlogList'
 import Togglable from './components/Togglable'
 import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, likeBlog, deleteBlog, addComment } from './reducers/blogReducer'
@@ -61,7 +59,6 @@ const App = () => {
 
     const handleLogin = (event) => {
         event.preventDefault()
-        //try {
         dispatch(login(username, password))
             .then(
                 dispatch(setNotification('succesfully logged in', 'info', 5))
@@ -72,15 +69,11 @@ const App = () => {
             })
         setUsername('')
         setPassword('')
-        //    dispatch(setNotification('succesfully logged in', 'info', 5))
-        //} catch (exception) {
-        //    dispatch(setNotification('wrong credentials', 'error', 5))
-        //}
+        history.push('/')
     }
 
     const handleLogout = () => {
         window.localStorage.removeItem('loggedBlogappUser')
-        //setUser(null)'
         dispatch(logout())
         dispatch(setNotification('logged out', 'info', 5))
     }
@@ -136,7 +129,7 @@ const App = () => {
         </form>
     )
 
-    const blogsForm = () => (
+    const blogForm = () => (
         <Togglable buttonLabel='new blog' ref={newBlogFormRef}>
             <NewBlogForm
                 createBlog={addBlog}
@@ -145,7 +138,6 @@ const App = () => {
     )
 
     const Users = ({ users }) => {
-        //const Users = () => {
         return (
             <>
                 <h2>users</h2>
@@ -171,7 +163,6 @@ const App = () => {
     }
 
     const User = () => {
-        //TODO tänne vai alkuun?
         const userRouteMatcher = useRouteMatch('/users/:id')
         if (!users) {
             return null
@@ -182,7 +173,6 @@ const App = () => {
         if (!user) {
             return null
         }
-        //console.log(users)
         return (
             <>
                 <h2>{user.name ? user.name : user.username}</h2>
@@ -196,13 +186,10 @@ const App = () => {
 
     const [newComment, setNewComment] = useState('')
 
-    const handleNewComment = (event) => {
+    const handleNewComment = (blog) => (event) => {
         event.preventDefault()
 
-        //FIXME blog placeholder
-        console.log('first blog', blogs[1])
-        console.log('comment', newComment)
-        dispatch(addComment(blogs[1], newComment))
+        dispatch(addComment(blog, newComment))
             .then(
                 dispatch(setNotification(`added comment ${newComment}`, 'info', 5))
             )
@@ -221,14 +208,14 @@ const App = () => {
                 <p>added by {blog.user.name ? blog.user.name : blog.user.username}</p>
                 <h3>comments</h3>
 
-                {commentForm()}
-                {blog.comments.map(comment => <li key={blog.id + comment}>{comment}</li>)}
+                {commentForm(blog)}
+                {blog.comments.map(comment => <li key={comment}>{comment}</li>)}
             </>
         )
     }
 
-    const commentForm = () => (
-        <form onSubmit={handleNewComment}>
+    const commentForm = (blog) => (
+        <form onSubmit={handleNewComment(blog)}>
             <input
                 id='comment'
                 type="text"
@@ -274,16 +261,12 @@ const App = () => {
                     {loginForm()}
                 </Route>
                 <Route path="/">
-
                     {loggedInUser ?
                         <>
-                            {blogsForm()}
-                            {blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
-                                <Blog key={blog.id} blog={blog} likeHandler={() => handleLike(blog.id)}
-                                    deleteHandler={setDeleteHandler(blog)} />
-                            )}
+                            {blogForm()}
+                            <BlogList blogs={blogs} />
                         </> :
-                        <Redirect to="/login" />
+                        loginForm()
                     }
                 </Route>
             </Switch>
