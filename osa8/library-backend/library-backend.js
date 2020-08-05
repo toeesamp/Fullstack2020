@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const _ = require('lodash')
 
 let authors = [
     {
@@ -91,10 +92,17 @@ const typeDefs = gql`
         id: ID!
         genres: [String!]
     }
+
+    type Author {
+        name: String!
+        bookCount: Int!
+    }
+
     type Query {
         bookCount: Int!
         authorCount: Int!
         allBooks: [Book!]!
+        allAuthors: [Author!]!
 }
 `
 
@@ -102,7 +110,17 @@ const resolvers = {
     Query: {
         bookCount: () => books.length,
         authorCount: () => [...new Set(books.map(book => book.author))].length,
-        allBooks: () => books
+        allBooks: () => books,
+        allAuthors: () => {
+            return _(books)
+                .countBy('author')
+                .toPairs()
+                .map(author => ({
+                    name: _.first(author), 
+                    bookCount: _.last(author)
+                }))
+                .value()
+        }
     }
 }
 
