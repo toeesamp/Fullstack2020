@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Authors = ({ show, authors }) => {
-    if (!show) {
+    if ( !show ) {
         return null
     }
 
@@ -14,10 +14,10 @@ const Authors = ({ show, authors }) => {
                         <th></th>
                         <th>
                             born
-            </th>
+                        </th>
                         <th>
                             books
-            </th>
+                        </th>
                     </tr>
                     {authors.map(a =>
                         <tr key={a.name}>

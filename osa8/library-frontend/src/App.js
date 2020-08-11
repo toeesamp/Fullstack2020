@@ -1,36 +1,64 @@
-import React, { useState } from 'react'
-import { useQuery } from '@apollo/client'
+import React, { useState, useEffect } from 'react'
+import { useQuery, useLazyQuery } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
-import { ALL_AUTHORS } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 const App = () => {
     const [page, setPage] = useState('authors')
+    const [getAuthors, authorsResult] = useLazyQuery(ALL_AUTHORS)
+    const [getBooks, booksResult] = useLazyQuery(ALL_BOOKS)
 
-    const result = useQuery(ALL_AUTHORS)
+    // const authorsResult = useQuery(ALL_AUTHORS)
+    // const booksResult = useQuery(ALL_BOOKS)
 
-    if (result.loading) {
-        return <div>loading...</div>
+    useEffect(() => {
+        getAuthors()
+    }, [getAuthors])
+
+    useEffect(() => {
+        console.log(authorsResult)
+    }, [authorsResult])
+
+    useEffect(() => {
+        console.log(booksResult)
+    }, [booksResult])
+
+    //if (authorsResult.loading || booksResult.loading) {
+    //    return <div>loading...</div>
+    //}
+
+    const showAuthors = () => {
+        setPage('authors')
+        getAuthors()
+    }
+
+    const showBooks = () => {
+        setPage('books')
+        getBooks()
     }
 
     return (
         <div>
             <div>
-                <button onClick={() => setPage('authors')}>authors</button>
-                <button onClick={() => setPage('books')}>books</button>
+                <button onClick={() => showAuthors()}>authors</button>
+                <button onClick={() => showBooks()}>books</button>
                 <button onClick={() => setPage('add')}>add book</button>
             </div>
+            {authorsResult.data &&
+                <Authors
+                    show={page === 'authors'}
+                    authors={authorsResult.data.allAuthors}
+                />
+            }
 
-            <Authors
-                show={page === 'authors'}
-                authors={result.data.allAuthors}
-            />
-
-            <Books
-                show={page === 'books'}
-            />
-
+            {booksResult.data &&
+                <Books
+                    show={page === 'books'}
+                    books={booksResult.data.allBooks}
+                />
+            }
             <NewBook
                 show={page === 'add'}
             />
@@ -40,3 +68,5 @@ const App = () => {
 }
 
 export default App
+
+/**<button onClick={() => setPage('books')}>books</button> */
