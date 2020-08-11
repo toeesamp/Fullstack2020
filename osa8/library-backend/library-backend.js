@@ -154,7 +154,8 @@ const resolvers = {
                 title: args.title,
                 published: args.published,
                 author: args.author,
-                genres: args.genres
+                genres: args.genres,
+                id: uuidv4()
             }
             books = books.concat(bookToAdd)
             return bookToAdd
