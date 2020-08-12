@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
@@ -9,9 +9,6 @@ const App = () => {
     const [page, setPage] = useState('authors')
     const [getAuthors, authorsResult] = useLazyQuery(ALL_AUTHORS)
     const [getBooks, booksResult] = useLazyQuery(ALL_BOOKS)
-
-    // const authorsResult = useQuery(ALL_AUTHORS)
-    // const booksResult = useQuery(ALL_BOOKS)
 
     useEffect(() => {
         getAuthors()
@@ -24,10 +21,6 @@ const App = () => {
     useEffect(() => {
         console.log(booksResult)
     }, [booksResult])
-
-    //if (authorsResult.loading || booksResult.loading) {
-    //    return <div>loading...</div>
-    //}
 
     const showAuthors = () => {
         setPage('authors')
@@ -68,5 +61,3 @@ const App = () => {
 }
 
 export default App
-
-/**<button onClick={() => setPage('books')}>books</button> */

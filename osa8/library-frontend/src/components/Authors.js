@@ -1,4 +1,5 @@
 import React from 'react'
+import BirthyearForm from './BirthyearForm'
 
 const Authors = ({ show, authors }) => {
     if ( !show ) {
@@ -29,6 +30,7 @@ const Authors = ({ show, authors }) => {
                 </tbody>
             </table>
 
+            <BirthyearForm authors={authors} />
         </div>
     )
 }
