@@ -15,6 +15,7 @@ const App = () => {
     }, [getAuthors])
 
     useEffect(() => {
+        console.log('authorsResult')
         console.log(authorsResult)
     }, [authorsResult])
 

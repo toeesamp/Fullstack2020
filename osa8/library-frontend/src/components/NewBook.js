@@ -21,7 +21,7 @@ const NewBook = (props) => {
     event.preventDefault()
 
     const publishYear = Number(published)
-    
+    console.log({ title, author, published: publishYear, genres })
     createBook({  variables: { title, author, published: publishYear, genres } })
 
     setTitle('')

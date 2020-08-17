@@ -34,7 +34,7 @@ const BirthyearForm = (props) => {
             <form onSubmit={submit}>
                 <select value={name} onChange={({ target }) => setName(target.value)}>
                     {props.authors.map(author =>
-                        <option value={author.name}>{author.name}</option>
+                        <option key={author.id} value={author.name}>{author.name}</option>
                     )}
                 </select>
                 <div>
