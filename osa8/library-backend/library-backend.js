@@ -1,7 +1,7 @@
 const { ApolloServer, UserInputError, gql, AuthenticationError } = require('apollo-server')
 const jwt = require('jsonwebtoken')
 //const _ = require('lodash')
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid')
 require('dotenv').config()
 
 const mongoose = require('mongoose')
@@ -154,8 +154,10 @@ const resolvers = {
         // bookCount: () => {return 0},
         // authorCount: () => authors.length,
         authorCount: () => Author.collection.countDocuments(),
-        allBooks: (root, args) => {
-            return Book.find({}).populate('author')
+        allBooks: async (root, args) => {
+            const test = await Book.find({}).populate('author')
+            console.log(test)
+            return test
             // return Book.find({})
             // let result = books
             // if (args.author) {
@@ -166,16 +168,16 @@ const resolvers = {
             // }
             // return result
         },
-        allAuthors: () => {
+        allAuthors: async () => {
             // const authors = Author.find({})
             // console.log('authors')
             // console.log(authors)
             // console.log('authors.collection')
             // console.log(authors.collection)
             // return authors.map(author => ({
-                //     ...author,
-                //     bookCount: 9001
-                //     //bookCount: books.filter(book => book.author === author.name).length
+            //     ...author,
+            //     bookCount: 9001
+            //     //bookCount: books.filter(book => book.author === author.name).length
             // }))
             // let testi = Author.find({})
             // console.log('sdgfsdfhg')
@@ -184,7 +186,79 @@ const resolvers = {
             // const asd = Author.find({}).then(authors => authors.map(author => console.log(author)))
             // console.log('asd',asd)
             // return asd
-            return Author.find({})
+            // let authors = await Author.find({})
+            // console.log('found authors', authors)
+            // let authorsWithBookcount = authors.map(author => author = {...author, bookCount: 9001})
+            // // let authorsWithBookcount = authors.map(author => ({
+            // //         ...author,
+            // //         bookCount: 9001
+            // //         //bookCount: books.filter(book => book.author === author.name).length
+            // // }))
+            // console.log('authorsWithBookcount', authorsWithBookcount)
+            // // return Author.find({})
+            // return authors
+            // return Author.find({}).then(authors => {authors.cursor().map(author => author.bookCount = 9001)})
+            //const test = Author.find({}).cursor().map(function (doc) {console.log('cursor doc', doc)})
+            // const test = Author.find({}).cursor().map(doc => doc.bookCount = 9001)
+            //const test = await Author.find({}).then(result => result.map(nakki => console.log(nakki._doc)))
+
+
+
+            // const test2 = await Author.find({}).lean().map(author => author.map(test => test = {...test, bookCount: 9001}) )
+            // //console.log(test2)
+            // //test.map(testi => console.log(testi))
+            // return test2
+
+            // const test345 = await Author.find({}).lean().map(author => author = {...author, bookCount: 9001}).map(author => Author.hydrate(author)).toArray()
+            // console.log('test345',test345)
+
+            // return test345
+
+            // const aaa = await Author.find({})
+            // const test = await Author.find({}).lean()
+            // console.log('test',test)
+            // const test2 = [...test]
+            // console.log('test2',test2)
+            // const test3 = test.map(author => author = {...author, bookCount: 9001})
+            // console.log('test3',test3)
+
+            // //const hydroHomie = Author.hydrate(test3)
+            // const hydroHomie = test3.map(testi => Author.hydrate(testi))
+
+            // console.log(hydroHomie)
+            // return hydroHomie
+
+            const authors = await Author.find({})
+            const books = await Book.find({})
+            //console.log(authors)
+            //const authors2 = authors.map(author)
+            const authorsJson = authors.map(author => author.toJSON())
+            console.log('authorsJson', authorsJson)
+            // const authorsJsonWithBookCount = authorsJson.map(author => {
+            //     // const authorBookCount = await Book.find({id: author.id}).length
+            //     console.log('author', author)
+            //     // author = {...author, bookCount: books.filter(book => book._id === author._id).length}
+            //     author = {...author, bookCount: 4}
+            // })
+            // const authorsJsonWithBookCount = await Promise.all(authorsJson.map(async author => {
+            //     const authorBookCount = await Book.find({id: author.id}).length
+            //     author = {...author, bookCount: authorBookCount}
+            // }))
+
+            // console.log('books',books)
+            books.map(book => console.log('book author id', book.author.toString().valueOf()))
+            authorsJson.map(author => console.log('author id', author.id.valueOf()))
+
+            const authorsJsonWithBookCount = authorsJson.map(author => {
+                // const test = books.filter(book => book.author.toString().valueOf() === author.id.valueOf()).length
+                // console.log('bookcounttest',test)
+                // return author = { ...author, bookCount: 4 }
+                return author = { ...author, bookCount: books.filter(book => book.author.toString().valueOf() === author.id.valueOf()).length }
+            })
+
+            // console.log('authorsJsonWithBookCount', authorsJsonWithBookCount)
+            return authorsJsonWithBookCount
+
         }
     },
     Mutation: {
@@ -192,12 +266,12 @@ const resolvers = {
             console.log('argsit')
             console.log(args)
 
-            let authorObject = await Author.findOne({name: args.author})
+            let authorObject = await Author.findOne({ name: args.author })
 
 
             if (!authorObject) {
                 console.log('luodaan uus')
-                authorObject = new Author({name: args.author})
+                authorObject = new Author({ name: args.author })
                 try {
                     await authorObject.save()
                 } catch (error) {
@@ -208,7 +282,7 @@ const resolvers = {
             }
             console.log('löytyi', authorObject)
 
-            const bookObject = {...args, author: authorObject}
+            const bookObject = { ...args, author: authorObject }
             // console.log('bookObject')
             // console.log(bookObject)
             // const book = new Book({ ...args, author: newAuthor._id })
@@ -254,3 +328,6 @@ const server = new ApolloServer({
 server.listen().then(({ url }) => {
     console.log(`Server ready at ${url}`)
 })
+
+
+

@@ -5,8 +5,7 @@ const Authors = ({ show, authors }) => {
     if ( !show ) {
         return null
     }
-    console.log('authors')
-    console.log(authors)
+    console.log('authors',authors)
 
     return (
         <div>
