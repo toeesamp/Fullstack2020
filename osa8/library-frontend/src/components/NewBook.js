@@ -8,6 +8,7 @@ const NewBook = (props) => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+  const [notification, setNotification] = useState(null)
 
   const [ createBook ] = useMutation(CREATE_BOOK, {
       refetchQueries: [ {query: ALL_AUTHORS}, {query: ALL_BOOKS}]
@@ -23,6 +24,14 @@ const NewBook = (props) => {
     const publishYear = Number(published)
     console.log({ title, author, published: publishYear, genres })
     createBook({  variables: { title, author, published: publishYear, genres } })
+        .catch(e => {
+            setNotification(e.message)
+            setTimeout(() => {
+                setNotification(null)
+            }, 5000)
+        })
+    
+    
 
     setTitle('')
     setPublished('')
@@ -38,6 +47,8 @@ const NewBook = (props) => {
 
   return (
     <div>
+        {notification && <div>{notification}</div>}
+        
       <form onSubmit={submit}>
         <div>
           title
