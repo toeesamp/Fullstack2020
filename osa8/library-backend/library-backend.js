@@ -149,125 +149,30 @@ const typeDefs = gql`
 
 const resolvers = {
     Query: {
-        // bookCount: () => books.length,
         bookCount: () => Book.collection.countDocuments(),
-        // bookCount: () => {return 0},
-        // authorCount: () => authors.length,
         authorCount: () => Author.collection.countDocuments(),
         allBooks: async (root, args) => {
-            const test = await Book.find({}).populate('author')
-            console.log(test)
-            return test
-            // return Book.find({})
-            // let result = books
-            // if (args.author) {
-            //     result = result.filter(book => book.author === args.author)
-            // }
-            // if (args.genre) {
-            //     result = result.filter(book => book.genres.find(genre => genre === args.genre))
-            // }
-            // return result
+            let searchTerm = {}
+            if (args.genre) {
+                searchTerm = { genres: { $in: [args.genre] } }
+            }
+            return await Book.find(searchTerm).populate('author')
         },
         allAuthors: async () => {
-            // const authors = Author.find({})
-            // console.log('authors')
-            // console.log(authors)
-            // console.log('authors.collection')
-            // console.log(authors.collection)
-            // return authors.map(author => ({
-            //     ...author,
-            //     bookCount: 9001
-            //     //bookCount: books.filter(book => book.author === author.name).length
-            // }))
-            // let testi = Author.find({})
-            // console.log('sdgfsdfhg')
-            // return testi
-            // const asd = Author.find({}).then(authors => authors.map(author => ({ ...author,bookCount: 9001 }))).then(authors => console.log(authors))
-            // const asd = Author.find({}).then(authors => authors.map(author => console.log(author)))
-            // console.log('asd',asd)
-            // return asd
-            // let authors = await Author.find({})
-            // console.log('found authors', authors)
-            // let authorsWithBookcount = authors.map(author => author = {...author, bookCount: 9001})
-            // // let authorsWithBookcount = authors.map(author => ({
-            // //         ...author,
-            // //         bookCount: 9001
-            // //         //bookCount: books.filter(book => book.author === author.name).length
-            // // }))
-            // console.log('authorsWithBookcount', authorsWithBookcount)
-            // // return Author.find({})
-            // return authors
-            // return Author.find({}).then(authors => {authors.cursor().map(author => author.bookCount = 9001)})
-            //const test = Author.find({}).cursor().map(function (doc) {console.log('cursor doc', doc)})
-            // const test = Author.find({}).cursor().map(doc => doc.bookCount = 9001)
-            //const test = await Author.find({}).then(result => result.map(nakki => console.log(nakki._doc)))
-
-
-
-            // const test2 = await Author.find({}).lean().map(author => author.map(test => test = {...test, bookCount: 9001}) )
-            // //console.log(test2)
-            // //test.map(testi => console.log(testi))
-            // return test2
-
-            // const test345 = await Author.find({}).lean().map(author => author = {...author, bookCount: 9001}).map(author => Author.hydrate(author)).toArray()
-            // console.log('test345',test345)
-
-            // return test345
-
-            // const aaa = await Author.find({})
-            // const test = await Author.find({}).lean()
-            // console.log('test',test)
-            // const test2 = [...test]
-            // console.log('test2',test2)
-            // const test3 = test.map(author => author = {...author, bookCount: 9001})
-            // console.log('test3',test3)
-
-            // //const hydroHomie = Author.hydrate(test3)
-            // const hydroHomie = test3.map(testi => Author.hydrate(testi))
-
-            // console.log(hydroHomie)
-            // return hydroHomie
-
             const authors = await Author.find({})
             const books = await Book.find({})
-            //console.log(authors)
-            //const authors2 = authors.map(author)
             const authorsJson = authors.map(author => author.toJSON())
-            console.log('authorsJson', authorsJson)
-            // const authorsJsonWithBookCount = authorsJson.map(author => {
-            //     // const authorBookCount = await Book.find({id: author.id}).length
-            //     console.log('author', author)
-            //     // author = {...author, bookCount: books.filter(book => book._id === author._id).length}
-            //     author = {...author, bookCount: 4}
-            // })
-            // const authorsJsonWithBookCount = await Promise.all(authorsJson.map(async author => {
-            //     const authorBookCount = await Book.find({id: author.id}).length
-            //     author = {...author, bookCount: authorBookCount}
-            // }))
-
-            // console.log('books',books)
-            books.map(book => console.log('book author id', book.author.toString().valueOf()))
-            authorsJson.map(author => console.log('author id', author.id.valueOf()))
 
             const authorsJsonWithBookCount = authorsJson.map(author => {
-                // const test = books.filter(book => book.author.toString().valueOf() === author.id.valueOf()).length
-                // console.log('bookcounttest',test)
-                // return author = { ...author, bookCount: 4 }
                 return author = { ...author, bookCount: books.filter(book => book.author.toString().valueOf() === author.id.valueOf()).length }
             })
 
-            // console.log('authorsJsonWithBookCount', authorsJsonWithBookCount)
             return authorsJsonWithBookCount
-
         }
     },
     Mutation: {
         addBook: async (root, args) => {
-            console.log('argsit')
-            console.log(args)
-
             let authorObject = await Author.findOne({ name: args.author })
-
 
             if (!authorObject) {
                 console.log('luodaan uus')
@@ -280,12 +185,7 @@ const resolvers = {
                     })
                 }
             }
-            console.log('löytyi', authorObject)
-
             const bookObject = { ...args, author: authorObject }
-            // console.log('bookObject')
-            // console.log(bookObject)
-            // const book = new Book({ ...args, author: newAuthor._id })
             const book = new Book(bookObject)
             try {
                 await book.save()
@@ -295,26 +195,21 @@ const resolvers = {
                 })
             }
             return book
-            // if (!authors.find(author => author.name === args.author)) {
-            //     authors = authors.concat({name: args.author, id: uuidv4()})
-            // }
-            // const bookToAdd = {
-            //     title: args.title,
-            //     published: args.published,
-            //     author: args.author,
-            //     genres: args.genres,
-            //     id: uuidv4()
-            // }
-            // books = books.concat(bookToAdd)
-            // return bookToAdd
         },
-        editAuthor: (root, args) => {
-            let authorToEdit = authors.find(author => author.name === args.name)
+        editAuthor: async (root, args) => {
+            const authorToEdit = await Author.findOne({ name: args.name })
             if (!authorToEdit) {
                 return null
             }
-            authorToEdit = { ...authorToEdit, born: args.setBornTo }
-            authors = authors.map(author => author.name === authorToEdit.name ? authorToEdit : author)
+            authorToEdit.born = args.setBornTo
+
+            try {
+                await authorToEdit.save()
+            } catch (error) {
+                throw new UserInputError(error.message, {
+                    invalidArgs: args,
+                })
+            }
             return authorToEdit
         }
     }
