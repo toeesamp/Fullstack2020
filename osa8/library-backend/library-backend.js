@@ -191,6 +191,7 @@ const resolvers = {
             return authorsJsonWithBookCount
         },
         me: (root, args, context) => {
+            console.log(context.currentUser)
             return context.currentUser
         }
     },
@@ -245,7 +246,7 @@ const resolvers = {
             return authorToEdit
         },
         createUser: (root, args) => {
-            const user = new User({ username: args.username })
+            const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre })
 
             return user.save()
                 .catch(error => {
