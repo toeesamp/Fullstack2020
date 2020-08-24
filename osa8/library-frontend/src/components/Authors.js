@@ -1,7 +1,7 @@
 import React from 'react'
 import BirthyearForm from './BirthyearForm'
 
-const Authors = ({ show, authors }) => {
+const Authors = ({ show, authors, token }) => {
     if ( !show ) {
         return null
     }
@@ -30,8 +30,7 @@ const Authors = ({ show, authors }) => {
                     )}
                 </tbody>
             </table>
-
-            <BirthyearForm authors={authors} />
+            {token && <BirthyearForm authors={authors} />}
         </div>
     )
 }

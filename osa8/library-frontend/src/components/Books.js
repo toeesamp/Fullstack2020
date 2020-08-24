@@ -4,8 +4,7 @@ const Books = ({ show, books }) => {
     if (!show) {
         return null
     }
-    console.log('books')
-    console.log(books)
+    console.log('books',books)
 
     return (
         <div>
