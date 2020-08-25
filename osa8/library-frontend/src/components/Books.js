@@ -1,30 +1,15 @@
 import React, { useState } from 'react'
 const _ = require('lodash')
 
-const Books = ({ show, books, genreSelectorHandler }) => {
+const Books = ({ show, books }) => {
     const [genre, setGenre] = useState(null)
     if (!show) {
         return null
     }
-    console.log('books',books)
-
-    // const genres = books.map(book => book.genres)
     const genres = _.uniq(_.flatten(_.map(books, 'genres')))
-    // const uniqueGenres = _.uniq(genres)
-    // const genres = _.uniq(_.map(books, 'genres'))
-    console.log('genres',genres)
-    // console.log('uniqueGenres',uniqueGenres)
-
-    
-
     const filteredBooks = genre ? books.filter(book => book.genres.includes(genre)) : books
 
-    console.log('filteredBooks', filteredBooks)
-
-    const testi = (selectedGenre) => {
-        console.log('testi', selectedGenre)
-        console.log('genrestate', genre)
-        // genreSelectorHandler(genre)
+    const selectGenre = (selectedGenre) => {
         setGenre(selectedGenre)
     }
     return (
@@ -52,9 +37,9 @@ const Books = ({ show, books, genreSelectorHandler }) => {
                 </tbody>
             </table>
             {genres.map(genre =>
-                <button key={genre} onClick={() => testi(genre)}>{genre}</button>
+                <button key={genre} onClick={() => selectGenre(genre)}>{genre}</button>
             )}
-            <button onClick={() => testi(null)}>all genres</button>
+            <button onClick={() => selectGenre(null)}>all genres</button>
         </div>
     )
 }

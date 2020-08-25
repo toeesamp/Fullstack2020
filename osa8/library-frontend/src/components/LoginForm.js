@@ -3,7 +3,6 @@ import { useMutation } from '@apollo/client'
 
 import { LOGIN } from '../queries'
 
-// const LoginForm = ({ setError, setToken }) => {
 const LoginForm = ({ show, setToken, redirect }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -11,7 +10,6 @@ const LoginForm = ({ show, setToken, redirect }) => {
 
     const [login, result] = useMutation(LOGIN, {
         onError: (error) => {
-            //   setError(error.graphQLErrors[0].message)
             console.log(error.graphQLErrors[0].message)
         }
     })

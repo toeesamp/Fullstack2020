@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery, useLazyQuery, useApolloClient } from '@apollo/client'
+import { useLazyQuery, useApolloClient, useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import Recommendations from './components/Recommendations'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { ALL_AUTHORS, ALL_BOOKS, ME } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS, ME, BOOK_ADDED } from './queries'
 
 const App = () => {
     const [token, setToken] = useState(null)
     const [page, setPage] = useState('authors')
-    // const [genreQuery, setGenreQuery] = useState(ALL_BOOKS)
     const [getAuthors, authorsResult] = useLazyQuery(ALL_AUTHORS)
-    // const [getBooks, booksResult] = useLazyQuery(genreQuery)
     const [getBooks, booksResult] = useLazyQuery(ALL_BOOKS)
     const [getUser, userResult] = useLazyQuery(ME)
     const client = useApolloClient()
-    // const user = useQuery(ME)
 
 
     useEffect(() => {
@@ -29,18 +26,6 @@ const App = () => {
     useEffect(() => {
         getAuthors()
     }, [getAuthors])
-
-    useEffect(() => {
-        console.log('authorsResult', authorsResult)
-    }, [authorsResult])
-
-    useEffect(() => {
-        console.log('booksResult', booksResult)
-    }, [booksResult])
-
-    useEffect(() => {
-        console.log('userResult', userResult)
-    }, [userResult])
 
     const showAuthors = () => {
         setPage('authors')
@@ -65,9 +50,14 @@ const App = () => {
         setPage('login')
     }
 
-    const getBooksWithGenre = (genre) => {
 
-    }
+    useSubscription(BOOK_ADDED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            const addedBook = subscriptionData.data.bookAdded
+            console.log('subscriptionData', addedBook)
+            window.alert(`Book added: ${addedBook.title} by ${addedBook.author.name}`)
+        }
+    })
 
     return (
         <div>
@@ -75,7 +65,6 @@ const App = () => {
                 <button onClick={() => showAuthors()}>authors</button>
                 <button onClick={() => showBooks()}>books</button>
                 {token && <button onClick={() => setPage('add')}>add book</button>}
-                {/* {token && <button onClick={() => setPage('recommended')}>recommended</button>} */}
                 {token && <button onClick={() => showRecommended()}>recommended</button>}
                 {token && <button onClick={logout} >logout</button>}
                 {!token && <button onClick={() => setPage('login')}>login</button>}
@@ -93,10 +82,8 @@ const App = () => {
                 <Books
                     show={page === 'books'}
                     books={booksResult.data.allBooks}
-                    genreSelectorHandler={() => getBooksWithGenre()}
                 />
             }
-            {/* {booksResult.data && user.data && */}
             {booksResult.data && userResult.data &&
                 <Recommendations
                     show={page === 'recommended'}

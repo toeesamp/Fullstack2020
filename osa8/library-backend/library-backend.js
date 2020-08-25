@@ -1,7 +1,5 @@
 const { ApolloServer, UserInputError, gql, AuthenticationError } = require('apollo-server')
 const jwt = require('jsonwebtoken')
-//const _ = require('lodash')
-const { v4: uuidv4 } = require('uuid')
 require('dotenv').config()
 
 const mongoose = require('mongoose')
