@@ -9,6 +9,7 @@ const Book = require('./models/book')
 const Author = require('./models/author')
 const User = require('./models/user')
 
+
 mongoose.set('useFindAndModify', false)
 
 const MONGODB_URI = process.env.MONGODB_URI
@@ -51,11 +52,6 @@ let authors = [
         id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
     },
 ]
-
-/*
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
-*/
 
 let books = [
     {
@@ -164,9 +160,14 @@ const typeDefs = gql`
             password: String!
         ): Token
     }
+
+    type Subscription {
+        bookAdded: Book!
+    }
 `
 
-
+const { PubSub } = require('apollo-server')
+const pubsub = new PubSub()
 
 const resolvers = {
     Query: {
@@ -223,6 +224,7 @@ const resolvers = {
                     invalidArgs: args,
                 })
             }
+            pubsub.publish('BOOK_ADDED', { bookAdded: book })
             return book
         },
         editAuthor: async (root, args, context) => {
@@ -269,6 +271,11 @@ const resolvers = {
 
             return { value: jwt.sign(userForToken, JWT_SECRET) }
         },
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+        },
     }
 }
 
@@ -287,9 +294,7 @@ const server = new ApolloServer({
     }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
     console.log(`Server ready at ${url}`)
+    console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
-
-
-
