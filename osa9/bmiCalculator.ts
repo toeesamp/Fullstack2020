@@ -1,5 +1,3 @@
-export {}
-
 interface BmiValues {
     height: number;
     weight: number;
@@ -54,9 +52,15 @@ const calculateBmi = (height: number, weight: number): Bmi => {
     }
 }
 
-try {
-    const { height, weight } = parseArguments(process.argv);
-    console.log(calculateBmi(height, weight));
-} catch (e) {
-    console.log('Error, something bad happened, message: ', e.message);
+() => {
+    try {
+        const { height, weight } = parseArguments(process.argv);
+        console.log(calculateBmi(height, weight));
+    } catch (e) {
+        console.log('Error, something bad happened, message: ', e.message);
+    }
 }
+
+
+
+export {calculateBmi}
