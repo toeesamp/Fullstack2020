@@ -1,9 +1,9 @@
 interface ExcerciseResults {
     periodLength: number;
     trainingDays: number;
-    success: boolean;
-    rating: number;
-    ratingDescription: string;
+    success: boolean | undefined;
+    rating: number | undefined;
+    ratingDescription: string | undefined;
     target: number;
     average: number;
 }
@@ -26,8 +26,6 @@ const parseArguments = (args: Array<string>): ExcerciseArguments => {
 }
 
 const calculateExcerciseResults = (target: number, trainingDaysArray: Array<number>): ExcerciseResults => {
-
-
     const periodLength = trainingDaysArray.length;
     const trainingDays = trainingDaysArray.filter(day => day > 0).length;
     const average = trainingDaysArray.reduce((a, b) => a + b, 0) / periodLength;
@@ -51,6 +49,10 @@ const calculateExcerciseResults = (target: number, trainingDaysArray: Array<numb
             ratingDescription = 'well done'
             success = true;
             break;
+        default:
+            rating = undefined;
+            ratingDescription = undefined
+            success = undefined;
     }
 
     return {

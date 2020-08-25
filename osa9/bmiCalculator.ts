@@ -27,7 +27,8 @@ type Bmi =
     'Overweight' |
     'Obese Class I (Moderately obese)' |
     'Obese Class II (Severely obese)' |
-    'Obese Class III (Very severely obese)'
+    'Obese Class III (Very severely obese)' |
+    undefined
 
 const calculateBmi = (height: number, weight: number): Bmi => {
     const bmiValue = (weight / ((height / 100) * (height / 100)))
@@ -48,6 +49,8 @@ const calculateBmi = (height: number, weight: number): Bmi => {
             return 'Obese Class II (Severely obese)';
         case (bmiValue >= 40):
             return 'Obese Class III (Very severely obese)';
+        default:
+            return undefined;
     }
 }
 
