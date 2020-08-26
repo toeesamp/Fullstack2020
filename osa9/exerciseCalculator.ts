@@ -1,4 +1,4 @@
-interface ExcerciseResults {
+export interface ExcerciseResults {
     periodLength: number;
     trainingDays: number;
     success: boolean | undefined;
@@ -8,7 +8,7 @@ interface ExcerciseResults {
     average: number;
 }
 
-interface ExcerciseArguments {
+export interface ExcerciseArguments {
     target: number;
     trainingDays: Array<number>;
 }
@@ -25,7 +25,7 @@ const parseArguments = (args: Array<string>): ExcerciseArguments => {
     }
 };
 
-const calculateExcerciseResults = (target: number, trainingDaysArray: Array<number>): ExcerciseResults => {
+export const calculateExcerciseResults = (target: number, trainingDaysArray: Array<number>): ExcerciseResults => {
     const periodLength = trainingDaysArray.length;
     const trainingDays = trainingDaysArray.filter(day => day > 0).length;
     const average = trainingDaysArray.reduce((a, b) => a + b, 0) / periodLength;
@@ -66,14 +66,16 @@ const calculateExcerciseResults = (target: number, trainingDaysArray: Array<numb
     };
 };
 
-try {
-    const { target, trainingDays } = parseArguments(process.argv);
-    console.log(calculateExcerciseResults(target, trainingDays));
-} catch (e) {
-    if(e instanceof Error) {
-        console.log('Error, something bad happened, message: ', e.message);
-    }
-    else {
-        throw e;
+() => {
+    try {
+        const { target, trainingDays } = parseArguments(process.argv);
+        console.log(calculateExcerciseResults(target, trainingDays));
+    } catch (e) {
+        if (e instanceof Error) {
+            console.log('Error, something bad happened, message: ', e.message);
+        }
+        else {
+            throw e;
+        }
     }
 }
