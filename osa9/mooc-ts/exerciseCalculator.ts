@@ -78,4 +78,4 @@ export const calculateExcerciseResults = (target: number, trainingDaysArray: Arr
             throw e;
         }
     }
-}
+};
