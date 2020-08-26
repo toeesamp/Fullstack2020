@@ -19,11 +19,11 @@ const parseArguments = (args: Array<string>): ExcerciseArguments => {
         return {
             target: Number(args[2]),
             trainingDays: args.slice(3).map(a => parseFloat(a))
-        }
+        };
     } else {
         throw new Error('Provided values were not numbers!');
     }
-}
+};
 
 const calculateExcerciseResults = (target: number, trainingDaysArray: Array<number>): ExcerciseResults => {
     const periodLength = trainingDaysArray.length;
@@ -41,17 +41,17 @@ const calculateExcerciseResults = (target: number, trainingDaysArray: Array<numb
             break;
         case successValue == 0:
             rating = 2;
-            ratingDescription = 'not bad'
+            ratingDescription = 'not bad';
             success = true;
             break;
         case successValue > 0:
             rating = 3;
-            ratingDescription = 'well done'
+            ratingDescription = 'well done';
             success = true;
             break;
         default:
             rating = undefined;
-            ratingDescription = undefined
+            ratingDescription = undefined;
             success = undefined;
     }
 
@@ -64,11 +64,16 @@ const calculateExcerciseResults = (target: number, trainingDaysArray: Array<numb
         rating: rating,
         ratingDescription: ratingDescription
     };
-}
+};
 
 try {
     const { target, trainingDays } = parseArguments(process.argv);
     console.log(calculateExcerciseResults(target, trainingDays));
 } catch (e) {
-    console.log('Error, something bad happened, message: ', e.message);
+    if(e instanceof Error) {
+        console.log('Error, something bad happened, message: ', e.message);
+    }
+    else {
+        throw e;
+    }
 }
