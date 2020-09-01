@@ -6,8 +6,6 @@
 import { NewPatient, Gender } from './types';
 
 export const toPatient = (object: any): NewPatient => {
-    // console.log('patient to add ',object);
-
     const newPatient: NewPatient = {
         name: parseName(object.name),
         dateOfBirth: parseDateOfBirth(object.dateOfBirth),
@@ -65,6 +63,3 @@ const isDate = (date: string): boolean => {
 const isGender = (gender: any): gender is Gender => {
     return Object.values(Gender).includes(gender);
 };
-
-
-// export default { toPatient(object: any) };

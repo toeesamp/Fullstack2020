@@ -3,8 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Patient, NonSensitivePatientData, NewPatient } from '../types';
 
-// const patients: Array<Patient> = patientData as Array<Patient>;
-
 const getPatients = (): Patient[] => {
     return patients;
 };

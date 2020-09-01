@@ -20,15 +20,6 @@ router.post('/', (req, res) => {
             res.status(400).send(e.message);
         }
     }
-    // const { name, dateOfBirth, ssn, gender, occupation } = req.body;
-    // const newPatient = patientService.addPatient({
-    //     name,
-    //     dateOfBirth,
-    //     ssn,
-    //     gender,
-    //     occupation
-    // });
-    // res.json(newPatient);
 });
 
 export default router;
