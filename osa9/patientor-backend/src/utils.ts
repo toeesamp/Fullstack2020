@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 
-import { NewPatient, Gender } from './types';
+import { NewPatient, Gender, Entry } from './types';
 
 export const toPatient = (object: any): NewPatient => {
     const newPatient: NewPatient = {
@@ -11,7 +11,8 @@ export const toPatient = (object: any): NewPatient => {
         dateOfBirth: parseDateOfBirth(object.dateOfBirth),
         ssn: parseSsn(object.ssn),
         gender: parseGender(object.gender),
-        occupation: parseOccupation(object.occupation)
+        occupation: parseOccupation(object.occupation),
+        entries: parseEntries(object.entries)
     };
     return newPatient;
 };
@@ -49,6 +50,12 @@ const parseOccupation = (occupation: any): string => {
         throw new Error('Incorrect or missing occupation: ' + occupation);
     }
     return occupation;
+};
+
+const parseEntries = (_entries: any): Entry[] => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const temp: Entry[] = [];
+    return temp;
 };
 
 
