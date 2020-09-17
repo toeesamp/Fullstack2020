@@ -19,12 +19,12 @@ export enum HealthCheckRating {
     "CriticalRisk" = 3
 }
 
-interface HealthCheckEntry extends BaseEntry {
+export interface HealthCheckEntry extends BaseEntry {
     type: "HealthCheck";
     healthCheckRating: HealthCheckRating;
 }
 
-interface OccupationalHealthcareEntry extends BaseEntry {
+export interface OccupationalHealthcareEntry extends BaseEntry {
     type: "OccupationalHealthcare";
     employerName: string;
     sickLeave?: {
@@ -33,7 +33,7 @@ interface OccupationalHealthcareEntry extends BaseEntry {
     }
 }
 
-interface HospitalEntry extends BaseEntry {
+export interface HospitalEntry extends BaseEntry {
     type: "Hospital";
     discharge: {
         date: string;
@@ -42,9 +42,9 @@ interface HospitalEntry extends BaseEntry {
 }
 
 export type Entry =
-  | HospitalEntry
-  | OccupationalHealthcareEntry
-  | HealthCheckEntry;
+    | HospitalEntry
+    | OccupationalHealthcareEntry
+    | HealthCheckEntry;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 //export interface Entry {
@@ -62,6 +62,17 @@ export interface Patient {
 export type NonSensitivePatientData = Omit<Patient, 'ssn' | 'entries'>;
 
 export type NewPatient = Omit<Patient, 'id'>;
+
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id'>;
+
+export type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'id'>;
+
+export type NewHospitalEntry = Omit<HospitalEntry, 'id'>;
+
+export type NewEntry =
+    | NewHospitalEntry
+    | NewOccupationalHealthcareEntry
+    | NewHealthCheckEntry;
 
 export enum Gender {
     Male = 'male',
