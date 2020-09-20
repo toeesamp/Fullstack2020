@@ -16,7 +16,6 @@ router.get('/:id', (req, res) => {
     } else {
         res.sendStatus(404);
     }
-
 });
 
 router.post('/', (req, res) => {
@@ -34,6 +33,7 @@ router.post('/', (req, res) => {
 
 router.post('/:id/entries', (req, res) => {
     try {
+        console.log('new entry', req.body);
         const newEntry = toEntry(req.body);
 
         const editedPatient = patientService.addEntry((req.params.id).toString(), newEntry); 
@@ -44,6 +44,5 @@ router.post('/:id/entries', (req, res) => {
         }
     }
 });
-
 
 export default router;

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 import { Diagnosis, NewPatient, Gender, Entry, NewEntry, NewHealthCheckEntry, NewOccupationalHealthcareEntry, NewHospitalEntry, HealthCheckRating } from './types';
@@ -20,7 +19,6 @@ export const toPatient = (object: any): NewPatient => {
 
 export const toEntry = (object: any): NewEntry => {
     const entryType = parseEntryType(object.type);
-    // let newEntry;
     switch (entryType) {
         case "Hospital":
             const hospitalEntry: NewHospitalEntry = {
@@ -29,7 +27,6 @@ export const toEntry = (object: any): NewEntry => {
                 description: parseDescription(object.description),
                 date: parseDate(object.date),
                 specialist: parseName(object.specialist),
-                //TODO optional?
                 diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes)
             };
             return hospitalEntry;
@@ -37,12 +34,10 @@ export const toEntry = (object: any): NewEntry => {
             const occupationalEntry: NewOccupationalHealthcareEntry = {
                 type: entryType,
                 employerName: parseName(object.employerName),
-                //TODO optional?
                 sickLeave: parseSickLeave(object.sickLeave),
                 description: parseDescription(object.description),
                 date: parseDate(object.date),
                 specialist: parseName(object.specialist),
-                //TODO optional?
                 diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes)
             };
             return occupationalEntry;
@@ -53,7 +48,6 @@ export const toEntry = (object: any): NewEntry => {
                 description: parseDescription(object.description),
                 date: parseDate(object.date),
                 specialist: parseName(object.specialist),
-                //TODO optional?
                 diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes)
             };
             return healtcheckEntry;
@@ -104,7 +98,6 @@ const parseEntryType = (entryType: any): string => {
     return entryType;
 };
 
-//FIXME?
 const parseEntries = (_entries: any): Entry[] => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const temp: Entry[] = [];
@@ -169,7 +162,3 @@ const isHealtCheckRating = (healthCheckRating: any): healthCheckRating is Health
 const isArray = (array: any): array is Array<string> => {
     return array instanceof Array;
 };
-
-// const isEntryType = (entry: any): entry is Entry => {
-//     return Object.values(Entry).includes(entry);
-// };
